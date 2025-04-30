@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Response,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
-import { Response as ExpressResponse } from 'express';
+import { BaseResponseDto } from '../common/dto/base-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,15 +9,15 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
+  async register(@Body() dto: RegisterDto): Promise<BaseResponseDto<any>> {
+    const result = await this.authService.register(dto);
+    return BaseResponseDto.success(result, 'User registered successfully');
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() dto: LoginDto, @Response() res: ExpressResponse) {
+  async login(@Body() dto: LoginDto): Promise<BaseResponseDto<any>> {
     const result = await this.authService.login(dto);
-
-    return res.status(HttpStatus.OK).json(result);
+    return BaseResponseDto.success(result, 'Login successful');
   }
 }
