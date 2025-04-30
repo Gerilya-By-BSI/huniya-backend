@@ -23,24 +23,35 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload) {
-    if (payload.user_type === 'user') {
-      const user = await this.prismaService.user.findUnique({
-        where: { id: payload.user_id },
-      });
+    try {
+      if (payload.user_type === 'user') {
+        const user = await this.prismaService.user.findUnique({
+          where: { id: payload.user_id },
+        });
 
-      if (!user) {
-        throw new UnauthorizedException('User not found');
-      }
-    } else if (payload.user_type === 'admin') {
-      const admin = await this.prismaService.admin.findUnique({
-        where: { id: payload.user_id },
-      });
+        if (!user) {
+          throw new UnauthorizedException('User not found');
+        }
 
-      if (!admin) {
-        throw new UnauthorizedException('Admin not found');
+        return payload;
+      } else if (payload.user_type === 'admin') {
+        const admin = await this.prismaService.admin.findUnique({
+          where: { id: payload.user_id },
+        });
+
+        if (!admin) {
+          throw new UnauthorizedException('Admin not found');
+        }
+
+        return payload;
       }
+
+      throw new UnauthorizedException('Invalid user type');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Authentication failed');
     }
-
-    return payload;
   }
 }
