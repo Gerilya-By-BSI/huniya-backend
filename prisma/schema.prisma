@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Branch {
+  id         Int      @id @default(autoincrement())
+  name       String
+
+  admins Admin[]
+
+  @@map("branches")
+}
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  branch_id Int
+  branch    Branch @relation(fields: [branch_id], references: [id])
+
+  houses House[]
+
+  @@map("admins")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  phone_number String   @unique
+  email        String   @unique
+  password     String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  profile_risk_id Int?             @unique
+  document        Document?
+  house_bookmarks HouseBookmark[]
+
+  profile_risk ProfileRisk? @relation(fields: [profile_risk_id], references: [id])
+
+  @@map("users")
+}
+
+model ProfileRisk {
+  id   Int    @id @default(autoincrement())
+  name String 
+
+  user User?
+
+  @@map("profile_risks")
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  ktp_url     String?
+  npwp_url    String?
+  payslip_url String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("documents")
+}
+
+model House {
+  id             String   @id @default(nanoid())
+  title          String
+  price          Int
+  location       String
+  room_count     Int
+  bathroom_count Int
+  parking_count  Int
+  land_area      Int
+  building_area  Int
+  index          Int
+  is_sold        Boolean  @default(false)
+  image_url      String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  house_bookmarks HouseBookmark[]
+
+  admin_id Int
+  admin    Admin @relation(fields: [admin_id], references: [id])
+
+  @@index(id, name: "houses_id_index")
+  @@map("houses")
+}
+
+model TrackingStatus {
+  id     Int    @id @default(autoincrement())
+  name String
+
+  house_bookmarks HouseBookmark[]
+
+  @@map("tracking_status")
+}
+
+model HouseBookmark {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
+
+  house_id String
+  house    House  @relation(fields: [house_id], references: [id])
+
+  tracking_status_id Int
+  tracking_status    TrackingStatus @relation(fields: [tracking_status_id], references: [id])
+
+  @@map("house_bookmarks")
+}
+
+model CoreBankingUser {
+  id                        Int    @id @default(autoincrement())
+  phone_number              String @unique
+  age                       Int
+  occupation                String
+  annual_income             Int
+  monthly_inhand_salary     Int
+  interest_rate             Int
+  num_of_loans              Int
+  type_of_loans             String
+  delay_from_due_date       Int
+  num_of_delayed_payments   Int
+  changed_credit_limit      Int
+  num_credit_inquiries      Int
+  credit_mix                String
+  outstanding_debt          Int
+  // credit_utilization_ratio  Int
+  credit_history_age        Int
+  payment_of_minimum_amount Int
+  total_emi_per_month       Int
+  // amount_invested_monthly   Int
+  payment_behaviour         String
+  monthly_balance           Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([phone_number], name: "core_banking_user_phone_number_index")
+  @@map("core_banking_users")
+}
