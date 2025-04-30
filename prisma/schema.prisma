@@ -136,8 +136,8 @@ model CoreBankingUser {
   phone_number              String @unique
   age                       Int
   occupation                String
-  annual_income             Int
-  monthly_inhand_salary     Int
+  annual_income             BigInt
+  monthly_inhand_salary     BigInt
   interest_rate             Int
   num_of_loans              Int
   type_of_loans             String
@@ -150,10 +150,10 @@ model CoreBankingUser {
   // credit_utilization_ratio  Int
   credit_history_age        Int
   payment_of_minimum_amount Int
-  total_emi_per_month       Int
+  total_emi_per_month       BigInt
   // amount_invested_monthly   Int
   payment_behaviour         String
-  monthly_balance           Int
+  monthly_balance           BigInt
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
