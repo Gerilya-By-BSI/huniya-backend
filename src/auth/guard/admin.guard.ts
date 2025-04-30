@@ -3,13 +3,14 @@ import {
   ExecutionContext,
   ForbiddenException,
 } from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { JwtPayload } from '../strategy';
 
 export class AdminGuard implements CanActivate {
-  canActivate(ctx: ExecutionContext) {
-    const { user } = ctx.switchToHttp().getRequest();
+  canActivate(ctx: ExecutionContext): boolean {
+    const request = ctx.switchToHttp().getRequest();
+    const user = request.user as JwtPayload;
 
-    if (user.role != Role.ADMIN) {
+    if (!user || user.user_type !== 'admin') {
       throw new ForbiddenException('Admin access required');
     }
 
