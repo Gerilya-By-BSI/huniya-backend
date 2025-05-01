@@ -15,20 +15,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build NestJS project
+      - name: Build project
         run: npm run build
 
-      - name: Deploy to production folder
+      - name: Deploy to production directory
         run: |
           sudo rm -rf /var/www/backend/*
-          sudo cp -r dist package.json /var/www/backend/
+          sudo cp -r dist node_modules package.json package-lock.json prisma /var/www/backend/
+          sudo cp /home/huniya/.env.backend /var/www/backend/.env
+
+      - name: Generate Prisma client
+        run: |
           cd /var/www/backend
-          sudo npm install --omit=dev
+          npx prisma generate
 
       - name: Restart backend app using PM2
         run: |
@@ -37,15 +41,9 @@ jobs:
             echo "🔁 Restarting existing backend process..."
             pm2 restart backend
           else
-            echo "Starting new backend process..."
+            echo "🚀 Starting new backend process..."
             pm2 start dist/src/main.js --name backend
           fi
 
-      - name: ✅ Deployment success
-        run: echo "✅ Backend successfully deployed and running."
-      
-      - name: Deploy to production directory
-        run: |
-          sudo rm -rf /var/www/backend/*
-          sudo cp -r dist node_modules package.json .env prisma /var/www/backend/
-
+      - name: Deployment success
+        run: echo "✅ Backend deployed and running via PM2."
