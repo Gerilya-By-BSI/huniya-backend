@@ -27,7 +27,8 @@ jobs:
         run: |
           sudo rm -rf /var/www/backend/*
           sudo cp -r dist node_modules package.json package-lock.json prisma /var/www/backend/
-          sudo cp /home/huniya/.env.backend /var/www/backend/.env
+          sudo cp .env /var/www/backend/.env
+
 
       - name: Generate Prisma client
         run: |
