@@ -12,31 +12,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          python-version: "3.10"  # atau versi yang kamu pakai
+          node-version: '18'
 
       - name: Install dependencies
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
+        run: npm install
 
-      - name: Deploy to server
+      - name: Build backend (NestJS)
+        run: npm run build
+
+      - name: Deploy to production
         run: |
           sudo rm -rf /var/www/backend/*
-          sudo cp -r * /var/www/backend/
+          sudo cp -r dist package.json /var/www/backend/
+          cd /var/www/backend
+          sudo npm install --omit=dev
 
-      - name: Restart backend with PM2 (or gunicorn)
+      - name: Restart backend via PM2
         run: |
           cd /var/www/backend
-          source venv/bin/activate
           if pm2 list | grep -q backend; then
             pm2 restart backend
           else
-            pm2 start gunicorn --name backend -- "app:app" -b 0.0.0.0:5000
+            pm2 start node --name backend -- dist/main.js
           fi
 
       - name: Deployment success
-        run: echo "✅ Flask backend deployed."
+        run: echo "✅ Backend deployed and running"
