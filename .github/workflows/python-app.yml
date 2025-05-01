@@ -43,3 +43,9 @@ jobs:
 
       - name: ✅ Deployment success
         run: echo "✅ Backend successfully deployed and running."
+      
+      - name: Deploy to production directory
+        run: |
+          sudo rm -rf /var/www/backend/*
+          sudo cp -r dist node_modules package.json .env prisma /var/www/backend/
+
