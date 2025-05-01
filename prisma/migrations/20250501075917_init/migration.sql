@@ -56,7 +56,7 @@ CREATE TABLE "documents" (
 
 -- CreateTable
 CREATE TABLE "houses" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "location" TEXT NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE "house_bookmarks" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "user_id" TEXT NOT NULL,
-    "house_id" TEXT NOT NULL,
+    "house_id" INTEGER NOT NULL,
     "tracking_status_id" INTEGER NOT NULL,
 
     CONSTRAINT "house_bookmarks_pkey" PRIMARY KEY ("id")
@@ -101,8 +101,8 @@ CREATE TABLE "core_banking_users" (
     "phone_number" TEXT NOT NULL,
     "age" INTEGER NOT NULL,
     "occupation" TEXT NOT NULL,
-    "annual_income" INTEGER NOT NULL,
-    "monthly_inhand_salary" INTEGER NOT NULL,
+    "annual_income" BIGINT NOT NULL,
+    "monthly_inhand_salary" BIGINT NOT NULL,
     "interest_rate" INTEGER NOT NULL,
     "num_of_loans" INTEGER NOT NULL,
     "type_of_loans" TEXT NOT NULL,
@@ -114,9 +114,9 @@ CREATE TABLE "core_banking_users" (
     "outstanding_debt" INTEGER NOT NULL,
     "credit_history_age" INTEGER NOT NULL,
     "payment_of_minimum_amount" INTEGER NOT NULL,
-    "total_emi_per_month" INTEGER NOT NULL,
+    "total_emi_per_month" BIGINT NOT NULL,
     "payment_behaviour" TEXT NOT NULL,
-    "monthly_balance" INTEGER NOT NULL,
+    "monthly_balance" BIGINT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
