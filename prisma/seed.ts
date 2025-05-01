@@ -88,7 +88,7 @@ async function createTrackingStatuses() {
 async function main() {
   await createProfileRisks();
   await createBranches();
-  await createAdmins();
+  // await createAdmins();
   await createTrackingStatuses();
 
   console.log('Seeding completed');
