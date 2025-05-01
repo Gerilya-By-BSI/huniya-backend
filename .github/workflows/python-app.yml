@@ -37,7 +37,7 @@ jobs:
             echo "🔁 Restarting existing backend process..."
             pm2 restart backend
           else
-            echo "🚀 Starting new backend process..."
+            echo "Starting new backend process..."
             pm2 start dist/src/main.js --name backend
           fi
 
