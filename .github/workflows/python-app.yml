@@ -27,13 +27,17 @@ jobs:
         run: |
           sudo rm -rf /var/www/backend/*
           sudo cp -r dist node_modules package.json package-lock.json prisma /var/www/backend/
-          sudo cp .env /var/www/backend/.env
 
+      - name: Generate .env file securely
+        run: |
+          echo 'DATABASE_URL="postgresql://postgres:rizqtracker@localhost:5432/huniya?schema=public"' | sudo tee /var/www/backend/.env
+          echo 'PORT=4000' | sudo tee -a /var/www/backend/.env
+          echo 'ACCESS_TOKEN_SECRET="a4f0b49c8af245b5fe0d5eed5bc64e2102307960e78307e0775ee3fbfb472f7f"' | sudo tee -a /var/www/backend/.env
 
       - name: Generate Prisma client
         run: |
           cd /var/www/backend
-          npx prisma generate
+          sudo npx prisma generate
 
       - name: Restart backend app using PM2
         run: |
@@ -48,4 +52,3 @@ jobs:
 
       - name: Deployment success
         run: echo "✅ Backend deployed and running via PM2."
-   
