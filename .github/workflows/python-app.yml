@@ -1,39 +1,43 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python application
+name: Backend CI/CD (Self-Hosted)
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
+    branches: [main]
 
 jobs:
-  build:
-
-    runs-on: [self-hosted, Linux]
+  deploy-backend:
+    runs-on: [self-hosted, linux]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build backend (NestJS)
+        run: npm run build
+
+      - name: Deploy to production
+        run: |
+          sudo rm -rf /var/www/backend/*
+          sudo cp -r dist package.json /var/www/backend/
+          cd /var/www/backend
+          sudo npm install --omit=dev
+
+      - name: Restart backend via PM2
+        run: |
+          cd /var/www/backend
+          if pm2 list | grep -q backend; then
+            pm2 restart backend
+          else
+            pm2 start node --name backend -- dist/main.js
+          fi
+
+      - name: Deployment success
+        run: echo "✅ Backend deployed and running"
