@@ -7,6 +7,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { PrismaExceptionFilter } from '@/common/exceptions';
 import { TransformInterceptor } from '@/common/interceptors';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { HousesModule } from './houses/houses.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     ]),
     PrismaModule,
     AuthModule,
+    HousesModule,
   ],
   providers: [
     {
