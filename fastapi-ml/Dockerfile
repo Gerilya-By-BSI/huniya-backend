@@ -2,8 +2,14 @@ FROM python:alpine
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir \
+    fastapi==0.104.0 \
+    uvicorn==0.23.2 \
+    pydantic==2.4.2 \
+    pandas==2.0.3 \
+    xgboost==2.0.0 \
+    scikit-learn==1.3.0 \
+    python-multipart==0.0.6
 
 COPY ./models/ /app/models/
 COPY main.py .
