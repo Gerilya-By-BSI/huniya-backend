@@ -147,11 +147,11 @@ model CoreBankingUser {
   num_credit_inquiries      Int
   credit_mix                String
   outstanding_debt          Int
-  // credit_utilization_ratio  Int
+  num_bank_accounts         Int
   credit_history_age        Int
   payment_of_minimum_amount Int
   total_emi_per_month       BigInt
-  // amount_invested_monthly   Int
+  num_credit_card           Int
   payment_behaviour         String
   monthly_balance           BigInt
 
