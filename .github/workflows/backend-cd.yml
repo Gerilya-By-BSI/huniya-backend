@@ -1,0 +1,20 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - name: git pull & deploy
+        with:
+          script: |
+            cd ~/actions-runner/_work/huniya-backend/huniya-backend
+            git pull origin main
+            docker-compose down
+            docker-compose build
+            docker-compose up -d
