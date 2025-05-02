@@ -25,13 +25,11 @@ services:
     env_file:
       - .env
     environment:
-      # Override the DATABASE_URL with docker-specific connection string
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-huniya}?schema=public
     depends_on:
       - db
     networks:
       - huniya
-    # command: ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
 
 networks:
   huniya:
