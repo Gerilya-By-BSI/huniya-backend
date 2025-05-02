@@ -152,7 +152,6 @@ model CoreBankingUser {
   credit_history_age        Float
   payment_of_minimum_amount Int
   total_emi_per_month       BigInt
-  // amount_invested_monthly   Int
   payment_behaviour         Int
   monthly_balance           BigInt
 
