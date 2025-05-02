@@ -14,11 +14,9 @@ services:
       - huniya
       
   ml-api:
+    image: rihlan24/fastapi-ml:latest
     container_name: ml-api
     restart: unless-stopped
-    build:
-      context: ./fastapi-ml
-      dockerfile: Dockerfile
     ports:
       - 5000:5000
     networks:
