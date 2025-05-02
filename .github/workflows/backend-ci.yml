@@ -29,7 +29,7 @@
 #           sudo cp -r dist node_modules package.json package-lock.json prisma /var/www/backend/
 #           sudo cp .env /var/www/backend/.env
 
-
+#
 #       - name: Generate Prisma client
 #         run: |
 #           cd /var/www/backend
