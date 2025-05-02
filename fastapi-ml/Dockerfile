@@ -1,6 +1,13 @@
-FROM python:alpine
+FROM python:3.13-slim
 
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    gcc \
+    libc-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir \
     fastapi==0.104.0 \
@@ -11,6 +18,7 @@ RUN pip install --no-cache-dir \
     scikit-learn==1.3.0 \
     python-multipart==0.0.6
 
+# Copy model files and application code
 COPY ./models/ /app/models/
 COPY main.py .
 
