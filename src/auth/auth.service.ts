@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto, RegisterDto } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -24,6 +24,10 @@ export class AuthService {
       },
     });
 
+    if (!user) {
+      throw new BadRequestException('Failed to create user');
+    }
+
     return {
       name: user.name,
       phone_number: user.phone_number,
@@ -32,6 +36,7 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<{
+    account_type: string;
     token: string;
   }> {
     const admin = await this.prismaService.admin.findUnique({
@@ -67,7 +72,7 @@ export class AuthService {
 
     const token = await this.signAccessToken(jwtPayload);
 
-    return { token };
+    return { account_type: accountType, token };
   }
 
   hashData(password: string) {

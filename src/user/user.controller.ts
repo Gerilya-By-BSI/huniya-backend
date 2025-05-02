@@ -40,7 +40,6 @@ export class UserController {
       throw new NotFoundException('User not found');
     }
 
-    // Prepare payload for FastAPI endpoint
     const payload = {
       Age: user.age,
       Occupation: user.occupation || 'Other',
@@ -64,7 +63,6 @@ export class UserController {
       Monthly_Balance: Number(user.monthly_balance),
     };
 
-    // Hit the FastAPI endpoint
     try {
       const fastApiUrl = this.configService.get('FASTAPI_URL');
       const response = await firstValueFrom(
