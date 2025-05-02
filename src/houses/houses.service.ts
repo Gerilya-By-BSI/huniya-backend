@@ -40,76 +40,87 @@ export class HousesService {
       min_building_area,
       max_building_area,
       search,
+      page = 1,
+      limit = 10,
     } = dto;
-
+  
     const where: Prisma.HouseWhereInput = {};
-
+  
     if (location) {
       where.location = { contains: location, mode: 'insensitive' };
     }
-
+  
     if (min_price && max_price) {
       where.price = {
         gte: Number(min_price),
         lte: Number(max_price),
       };
     }
-
+  
     if (room_count) {
       where.room_count = Number(room_count);
     }
-
+  
     if (bathroom_count) {
       where.bathroom_count = Number(bathroom_count);
     }
-
+  
     if (parking_count) {
       where.parking_count = Number(parking_count);
     }
-
+  
     if (min_land_area && max_land_area) {
       where.land_area = {
         gte: Number(min_land_area),
         lte: Number(max_land_area),
       };
     }
-
+  
     if (min_building_area && max_building_area) {
       where.building_area = {
         gte: Number(min_building_area),
         lte: Number(max_building_area),
       };
     }
-
+  
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { location: { contains: search, mode: 'insensitive' } },
       ];
     }
-
+  
+    const skip = (page - 1) * limit; 
     const data = await this.prismaService.house.findMany({
       where,
+      skip, 
+      take: limit, 
       select: {
-        id:true,
+        id: true,
         title: true,
         price: true,
         location: true,
         land_area: true,
         building_area: true,
+        room_count: true,
+        bathroom_count: true,
+        parking_count: true,
         image_url: true,
       },
     });
-
+  
     const totalData = await this.prismaService.house.count({
       where,
     });
-
+  
     return {
       totalData,
       data,
+      totalPages: Math.ceil(totalData / limit), 
+      currentPage: page, 
     };
   }
+  
 
   async findOne(id: number) {
     try {

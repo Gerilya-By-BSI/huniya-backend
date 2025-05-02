@@ -10,16 +10,11 @@ import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
 import { House } from 'generated/prisma';
 import { ParseIntPipe } from '@nestjs/common';
 
-
-
-
-
 @UseGuards(JwtGuard)
 @Controller('houses')
 export class HousesController {
   constructor(private readonly housesService: HousesService) {}
 
-  
   @Get()
   async findAll(@Query() query: QueryHouseDto) {
     const { data, totalData } = await this.housesService.findAll(query);
@@ -31,9 +26,10 @@ export class HousesController {
     return new BaseResponseDto(true, 'Houses fetched successfully', {
       total_data: totalData,
       data,
+      total_pages: Math.ceil(totalData / query.limit), // Total halaman berdasarkan totalData dan limit
+      current_page: query.page, // Halaman saat ini
     });
   }
-
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.housesService.findOne(id);

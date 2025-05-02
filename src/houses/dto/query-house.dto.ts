@@ -1,47 +1,67 @@
-import { IsNumberString, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsInt } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class QueryHouseDto {
-  @IsString()
   @IsOptional()
+  @IsString()
   location?: string;
 
-  @IsString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   min_price?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   max_price?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   room_count?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   bathroom_count?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   parking_count?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   min_land_area?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   max_land_area?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   min_building_area?: number;
 
-  @IsNumberString()
   @IsOptional()
+  @IsNumber()
+  @IsInt()
   max_building_area?: number;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   search?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10)) // Convert page to integer
+  @IsInt()
+  page: number = 1;  // Default page is 1
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10)) // Convert limit to integer
+  @IsInt()
+  limit: number = 10;  // Default limit is 10
 }
