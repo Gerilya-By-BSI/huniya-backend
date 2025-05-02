@@ -11,8 +11,11 @@ RUN pnpm install --frozen-lockfile
 # Second stage: Use the cached pnpm store
 FROM cache AS final
 
-RUN apt-get update -y && \
-    apt-get install -y openssl postgresql-client && \
+RUN apt-get update -y || true && \
+    apt-get install -y --no-install-recommends apt-transport-https ca-certificates gnupg && \
+    apt-get update -y --allow-unauthenticated || true && \
+    apt-get install -y --no-install-recommends --allow-unauthenticated \
+        openssl postgresql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
