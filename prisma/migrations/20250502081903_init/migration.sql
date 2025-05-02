@@ -103,6 +103,8 @@ CREATE TABLE "core_banking_users" (
     "occupation" TEXT NOT NULL,
     "annual_income" BIGINT NOT NULL,
     "monthly_inhand_salary" BIGINT NOT NULL,
+    "num_bank_accounts" INTEGER NOT NULL,
+    "num_credit_cards" INTEGER NOT NULL,
     "interest_rate" INTEGER NOT NULL,
     "num_of_loans" INTEGER NOT NULL,
     "type_of_loans" TEXT NOT NULL,
