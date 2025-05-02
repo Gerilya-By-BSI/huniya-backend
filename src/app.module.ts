@@ -5,9 +5,10 @@ import { PrismaModule } from '@/prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { PrismaExceptionFilter } from '@/common/exceptions';
-import { TransformInterceptor } from '@/common/interceptors';
+import { BigIntInterceptor, TransformInterceptor } from '@/common/interceptors';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HousesModule } from './houses/houses.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { HousesModule } from './houses/houses.module';
     PrismaModule,
     AuthModule,
     HousesModule,
+    UserModule,
   ],
   providers: [
     {
@@ -34,6 +36,10 @@ import { HousesModule } from './houses/houses.module';
     {
       provide: APP_FILTER,
       useClass: PrismaExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: BigIntInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
