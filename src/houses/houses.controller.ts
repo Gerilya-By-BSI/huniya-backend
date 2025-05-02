@@ -7,7 +7,7 @@ import { NotFoundException } from '@nestjs/common';
 import { User } from '@/auth/decorator/user.decorator';
 import { HouseTrackingStatusDto } from './dto/update-tracking-status.dto'; // Pastikan path-nya sesuai
 import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
-import { House } from 'generated/prisma';
+// import { House } from 'generated/prisma';
 import { ParseIntPipe } from '@nestjs/common';
 
 
