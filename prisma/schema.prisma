@@ -81,7 +81,7 @@ model Document {
 }
 
 model House {
-  id             Int   @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   title          String
   price          Int
   location       String
@@ -123,7 +123,7 @@ model HouseBookmark {
   user    User   @relation(fields: [user_id], references: [id])
 
   house_id Int
-  house    House  @relation(fields: [house_id], references: [id])
+  house    House @relation(fields: [house_id], references: [id])
 
   tracking_status_id Int
   tracking_status    TrackingStatus @relation(fields: [tracking_status_id], references: [id])
@@ -132,31 +132,32 @@ model HouseBookmark {
 }
 
 model CoreBankingUser {
-  id                        Int    @id @default(autoincrement())
-  phone_number              String @unique
+  id                        Int     @id @default(autoincrement())
+  phone_number              String  @unique
   age                       Int
-  occupation                String
+  occupation                String?
   annual_income             BigInt
   monthly_inhand_salary     BigInt
+  num_bank_accounts         Int
+  num_credit_cards          Int
   interest_rate             Int
-  num_of_loans              Int
+  num_of_loans              Float
   type_of_loans             String
   delay_from_due_date       Int
-  num_of_delayed_payments   Int
-  changed_credit_limit      Int
-  num_credit_inquiries      Int
-  credit_mix                String
-  outstanding_debt          Int
-  num_bank_accounts         Int
-  credit_history_age        Int
+  num_of_delayed_payments   Float
+  changed_credit_limit      Float
+  num_credit_inquiries      Float
+  credit_mix                Int
+  outstanding_debt          Float
+  credit_history_age        Float
   payment_of_minimum_amount Int
   total_emi_per_month       BigInt
-  num_credit_card           Int
+  // amount_invested_monthly   Int
   payment_behaviour         String
   monthly_balance           BigInt
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime?  @default(now())
+  updated_at DateTime? @updatedAt
 
   @@index([phone_number], name: "core_banking_user_phone_number_index")
   @@map("core_banking_users")

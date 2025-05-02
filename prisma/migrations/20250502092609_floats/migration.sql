@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "core_banking_users" ALTER COLUMN "num_of_loans" SET DATA TYPE DOUBLE PRECISION,
+ALTER COLUMN "num_of_delayed_payments" SET DATA TYPE DOUBLE PRECISION,
+ALTER COLUMN "num_credit_inquiries" SET DATA TYPE DOUBLE PRECISION,
+ALTER COLUMN "credit_history_age" SET DATA TYPE DOUBLE PRECISION;

@@ -7,11 +7,11 @@ export class QueryHouseDto {
 
   @IsString()
   @IsOptional()
-  minPrice?: number;
+  min_price?: number;
 
   @IsNumberString()
   @IsOptional()
-  maxPrice?: number;
+  max_price?: number;
 
   @IsNumberString()
   @IsOptional()
@@ -27,19 +27,19 @@ export class QueryHouseDto {
 
   @IsNumberString()
   @IsOptional()
-  minLandArea?: number;
+  min_land_area?: number;
 
   @IsNumberString()
   @IsOptional()
-  maxLandArea?: number;
+  max_land_area?: number;
 
   @IsNumberString()
   @IsOptional()
-  minBuildingArea?: number;
+  min_building_area?: number;
 
   @IsNumberString()
   @IsOptional()
-  maxBuildingArea?: number;
+  max_building_area?: number;
 
   @IsString()
   @IsOptional()

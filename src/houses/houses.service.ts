@@ -30,64 +30,64 @@ export class HousesService {
   async findAll(dto: QueryHouseDto) {
     const {
       location,
-      minPrice,
-      maxPrice,
+      min_price,
+      max_price,
       room_count,
       bathroom_count,
       parking_count,
-      minLandArea,
-      maxLandArea,
-      minBuildingArea,
-      maxBuildingArea,
+      min_land_area,
+      max_land_area,
+      min_building_area,
+      max_building_area,
       search,
     } = dto;
-  
+
     const where: Prisma.HouseWhereInput = {};
-  
+
     if (location) {
       where.location = { contains: location, mode: 'insensitive' };
     }
-  
-    if (minPrice && maxPrice) {
+
+    if (min_price && max_price) {
       where.price = {
-        gte: Number(minPrice),
-        lte: Number(maxPrice),
+        gte: Number(min_price),
+        lte: Number(max_price),
       };
     }
-  
+
     if (room_count) {
       where.room_count = Number(room_count);
     }
-  
+
     if (bathroom_count) {
       where.bathroom_count = Number(bathroom_count);
     }
-  
+
     if (parking_count) {
       where.parking_count = Number(parking_count);
     }
-  
-    if (minLandArea && maxLandArea) {
+
+    if (min_land_area && max_land_area) {
       where.land_area = {
-        gte: Number(minLandArea),
-        lte: Number(maxLandArea),
+        gte: Number(min_land_area),
+        lte: Number(max_land_area),
       };
     }
-  
-    if (minBuildingArea && maxBuildingArea) {
+
+    if (min_building_area && max_building_area) {
       where.building_area = {
-        gte: Number(minBuildingArea),
-        lte: Number(maxBuildingArea),
+        gte: Number(min_building_area),
+        lte: Number(max_building_area),
       };
     }
-  
+
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { location: { contains: search, mode: 'insensitive' } },
       ];
     }
-  
+
     const data = await this.prismaService.house.findMany({
       where,
       select: {
@@ -100,11 +100,11 @@ export class HousesService {
         image_url: true,
       },
     });
-  
+
     const totalData = await this.prismaService.house.count({
       where,
     });
-  
+
     return {
       totalData,
       data,
