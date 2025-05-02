@@ -153,7 +153,7 @@ model CoreBankingUser {
   payment_of_minimum_amount Int
   total_emi_per_month       BigInt
   // amount_invested_monthly   Int
-  payment_behaviour         String
+  payment_behaviour         Int
   monthly_balance           BigInt
 
   created_at DateTime?  @default(now())
