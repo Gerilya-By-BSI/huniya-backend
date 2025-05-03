@@ -54,6 +54,9 @@ export class BookmarksService {
             land_area: true,
             building_area: true,
             image_url: true,
+            room_count: true,
+            bathroom_count: true,
+            parking_count: true
           },
         },
         tracking_status: {
