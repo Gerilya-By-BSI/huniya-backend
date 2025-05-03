@@ -215,19 +215,82 @@ export class AdminService {
   
 
 
+  // async getHouseDetail(houseId: number, adminId: string) {
+  //   try {
+  //     const house = await this.prismaService.house.findFirst({
+  //       where: {
+  //         id: houseId,
+  //         admin_id: adminId,
+  //       },
+  //       include: {
+  //         house_bookmarks: {
+  //           include: {
+  //             user: {
+  //               include: {
+  //                 profile_risk: true,  // Memasukkan profile_risk
+  //               },
+  //             },
+  //             tracking_status: true, // Memasukkan tracking_status
+  //           },
+  //         },
+  //       },
+  //     });
+  
+  //     if (!house) {
+  //       throw new Error("House not found or not owned by the authenticated admin");
+  //     }
+  
+  //     // Menyiapkan response data
+  //     const houseDetails = {
+  //       id: house.id,
+  //       title: house.title,
+  //       price: house.price,
+  //       location: house.location,
+  //       room_count: house.room_count,
+  //       bathroom_count: house.bathroom_count,
+  //       parking_count: house.parking_count,
+  //       land_area: house.land_area,
+  //       building_area: house.building_area,
+  //       image_url: house.image_url,
+  //       created_at: house.created_at,
+  //       house_bookmarks: house.house_bookmarks.map((bookmark) => ({
+  //         user: {
+  //           id: bookmark.user.id,
+  //           name: bookmark.user.name,
+  //           phone_number: bookmark.user.phone_number,
+  //           email: bookmark.user.email,
+  //           profile_risk: bookmark.user.profile_risk ? { id: bookmark.user.profile_risk.id, name: bookmark.user.profile_risk.name } : null,  // Jika tidak ada profile_risk, set null
+  //         },
+  //         tracking_status: {
+  //           id: bookmark.tracking_status.id,  // Menambahkan ID dari tracking_status
+  //           name: bookmark.tracking_status.name,
+  //         },
+  //       })),
+  //     };
+  
+  //     return {
+  //       message: "House details retrieved successfully",
+  //       data: houseDetails,
+  //     };
+  //   } catch (error) {
+  //     throw new Error(error.message);
+  //   }
+  // }
+
   async getHouseDetail(houseId: number, adminId: string) {
     try {
+      // Cari rumah berdasarkan houseId dan adminId
       const house = await this.prismaService.house.findFirst({
         where: {
           id: houseId,
-          admin_id: adminId,
+          admin_id: adminId, // Pastikan adminId milik rumah yang dicari
         },
         include: {
           house_bookmarks: {
             include: {
               user: {
                 include: {
-                  profile_risk: true,  // Memasukkan profile_risk
+                  profile_risk: true, // Memasukkan profile_risk
                 },
               },
               tracking_status: true, // Memasukkan tracking_status
@@ -236,8 +299,11 @@ export class AdminService {
         },
       });
   
+      console.log(adminId)
+      console.log(house)
+      // Jika rumah tidak ditemukan atau admin tidak memiliki rumah tersebut, throw error
       if (!house) {
-        throw new Error("House not found or not owned by the authenticated admin");
+        throw new Error("You are not authorized to view this house details.");
       }
   
       // Menyiapkan response data
@@ -253,12 +319,10 @@ export class AdminService {
         building_area: house.building_area,
         image_url: house.image_url,
         created_at: house.created_at,
+        totalData: house.house_bookmarks.length, 
         house_bookmarks: house.house_bookmarks.map((bookmark) => ({
           user: {
-            id: bookmark.user.id,
             name: bookmark.user.name,
-            phone_number: bookmark.user.phone_number,
-            email: bookmark.user.email,
             profile_risk: bookmark.user.profile_risk ? { id: bookmark.user.profile_risk.id, name: bookmark.user.profile_risk.name } : null,  // Jika tidak ada profile_risk, set null
           },
           tracking_status: {
@@ -276,6 +340,7 @@ export class AdminService {
       throw new Error(error.message);
     }
   }
+  
   
   
   
