@@ -16,13 +16,19 @@ import { NotFoundException } from '@nestjs/common';
 import { User } from '@/auth/decorator/user.decorator';
 import { HouseTrackingStatusDto } from './dto/update-tracking-status.dto'; // Pastikan path-nya sesuai
 import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
-// import { House } from 'generated/prisma';
 import { ParseIntPipe } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 
 @UseGuards(JwtGuard)
 @Controller('houses')
 export class HousesController {
-  constructor(private readonly housesService: HousesService) {}
+  constructor(
+    private readonly housesService: HousesService,
+    private readonly configService: ConfigService,
+    private readonly httpService: HttpService,
+  ) {}
 
   @Get()
   async findAll(@Query() query: QueryHouseDto) {
@@ -39,11 +45,33 @@ export class HousesController {
       current_page: query.page, // Halaman saat ini
     });
   }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return BaseResponseDto.success(
-      'House fetched successfully',
-      await this.housesService.findOne(id),
+    const house = await this.housesService.findOne(id);
+
+    if (!house) {
+      throw new NotFoundException('House not found');
+    }
+
+    const payload = {
+      index: house.index,
+    };
+
+    const fastApiUrl = this.configService.get('FASTAPI_URL');
+    const response = await firstValueFrom(
+      this.httpService.post(`${fastApiUrl}/api/similar-houses/`, payload),
     );
+
+    console.log('similar: ', response.data);
+
+    const similarHouses = await this.housesService.findSimilarHouses(
+      response.data.similar_houses,
+    );
+
+    return new BaseResponseDto(true, 'House fetched successfully', {
+      house,
+      similar_houses: similarHouses,
+    });
   }
 }
