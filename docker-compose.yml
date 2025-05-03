@@ -47,6 +47,8 @@ services:
     depends_on:
       - db
       - ml-api
+    volumes:
+      - ./storage:/app/storage
     networks:
       - huniya
 
