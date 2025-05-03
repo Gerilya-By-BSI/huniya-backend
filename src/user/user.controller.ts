@@ -97,6 +97,19 @@ export class UserController {
     }
   }
 
+      @Get('profile')
+    @HttpCode(HttpStatus.OK)
+    async getProfile(@User('user_id') userId: string) {
+      const user = await this.userService.getProfile(userId);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return new BaseResponseDto(true, 'Successfully retrieved user profile', user);
+    }
+
+
   // @Post()
   // create(@Body() createUserDto: CreateUserDto) {
   //   return this.userService.create(createUserDto);
