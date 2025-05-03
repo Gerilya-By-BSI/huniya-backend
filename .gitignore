@@ -61,3 +61,10 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .venv
 /fastapi-ml/venv
 fastapi-ml/__pycache__
+
+# File uploads directory (create this in the container)
+# storage
+storage/uploads
+storage/uploads/ktp
+storage/uploads/npwp
+storage/uploads/payslip
