@@ -57,7 +57,7 @@ async getHousesByAdmin(@User('user_id') adminId: string) {
 }
 
 @Get('house-detail/:id')
-  async getHouseDetail(@Param('id') houseId: string, @User('admin_id') adminId: string) {
+  async getHouseDetail(@Param('id') houseId: string, @User('user_id') adminId: string) {
     try {
       const result = await this.adminService.getHouseDetail(Number(houseId), adminId);
       return result;
