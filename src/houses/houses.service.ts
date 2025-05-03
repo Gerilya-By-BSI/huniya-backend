@@ -144,4 +144,33 @@ export class HousesService {
       throw new Error(error.message);
     }
   }
+
+  async findSimilarHouses(indexes: number[]) {
+    try {
+      const houses = await this.prismaService.house.findMany({
+        where: {
+          index: {
+            in: indexes,
+          },
+        },
+        select: {
+          id: true,
+          title: true,
+          price: true,
+          location: true,
+          land_area: true,
+          building_area: true,
+          room_count: true,
+          bathroom_count: true,
+          parking_count: true,
+          image_url: true,
+          index: true,
+        },
+      });
+
+      return houses;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
