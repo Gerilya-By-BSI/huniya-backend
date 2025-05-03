@@ -145,4 +145,138 @@ export class AdminService {
       data: updatedBookmark,
     };
   }
+
+  async getHousesByAdmin(adminId: string) {
+    try {
+      const houses = await this.prismaService.house.findMany({
+        where: {
+          admin_id: adminId,
+        },
+        select: {
+          id: true,
+          title: true,
+          parking_count:true,
+          bathroom_count:true,
+          room_count:true,
+          price:true,
+          image_url:true,
+          house_bookmarks: {
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  phone_number: true,
+                  profile_risk: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+  
+      const result = houses.map((house) => ({
+        id: house.id,
+        title: house.title,
+        parking_count:house.parking_count,
+        bathroom_count:house.bathroom_count,
+        room_count:house.room_count,
+        price:house.price,
+        img_url: house.image_url,
+        totalBookmarks: house.house_bookmarks.length,
+        users: house.house_bookmarks.map((bookmark) => ({
+          id: bookmark.user.id,
+          name: bookmark.user.name,
+          email: bookmark.user.email,
+          phone_number: bookmark.user.phone_number,
+          profile_risk: bookmark.user.profile_risk,
+        })),
+      }));
+  
+      return {
+          totalData: result.length,
+          data: result,
+      };
+    } catch (error) {
+      console.error('Error in getHouseByAdmin:', error);
+      return {
+        success: false,
+        message: 'Failed to retrieve houses',
+        result: null,
+      };
+    }
+  }
+  
+
+
+  async getHouseDetail(houseId: number, adminId: string) {
+    try {
+      const house = await this.prismaService.house.findFirst({
+        where: {
+          id: houseId,
+          admin_id: adminId,
+        },
+        include: {
+          house_bookmarks: {
+            include: {
+              user: {
+                include: {
+                  profile_risk: true,  // Memasukkan profile_risk
+                },
+              },
+              tracking_status: true, // Memasukkan tracking_status
+            },
+          },
+        },
+      });
+  
+      if (!house) {
+        throw new Error("House not found or not owned by the authenticated admin");
+      }
+  
+      // Menyiapkan response data
+      const houseDetails = {
+        id: house.id,
+        title: house.title,
+        price: house.price,
+        location: house.location,
+        room_count: house.room_count,
+        bathroom_count: house.bathroom_count,
+        parking_count: house.parking_count,
+        land_area: house.land_area,
+        building_area: house.building_area,
+        image_url: house.image_url,
+        created_at: house.created_at,
+        house_bookmarks: house.house_bookmarks.map((bookmark) => ({
+          user: {
+            id: bookmark.user.id,
+            name: bookmark.user.name,
+            phone_number: bookmark.user.phone_number,
+            email: bookmark.user.email,
+            profile_risk: bookmark.user.profile_risk ? { id: bookmark.user.profile_risk.id, name: bookmark.user.profile_risk.name } : null,  // Jika tidak ada profile_risk, set null
+          },
+          tracking_status: {
+            id: bookmark.tracking_status.id,  // Menambahkan ID dari tracking_status
+            name: bookmark.tracking_status.name,
+          },
+        })),
+      };
+  
+      return {
+        message: "House details retrieved successfully",
+        data: houseDetails,
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  
+  
+  
 }
