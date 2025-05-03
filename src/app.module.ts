@@ -26,7 +26,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
     AuthModule,
     HousesModule,
     UserModule,
-    BookmarksModule
+    BookmarksModule,
   ],
   providers: [
     {

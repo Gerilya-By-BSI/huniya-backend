@@ -3,8 +3,7 @@ import { CreateHouseDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { QueryHouseDto } from './dto/query-house.dto';
-import { NotFoundException, ConflictException} from '@nestjs/common';
-
+import { NotFoundException, ConflictException } from '@nestjs/common';
 
 import { Prisma } from '@prisma/client';
 import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
@@ -12,7 +11,6 @@ import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
 @Injectable()
 export class HousesService {
   constructor(private readonly prismaService: PrismaService) {}
-  
 
   update(id: number, updateHouseDto: UpdateHouseDto) {
     return this.prismaService.house.update({
@@ -43,58 +41,58 @@ export class HousesService {
       page = 1,
       limit = 10,
     } = dto;
-  
+
     const where: Prisma.HouseWhereInput = {};
-  
+
     if (location) {
       where.location = { contains: location, mode: 'insensitive' };
     }
-  
+
     if (min_price && max_price) {
       where.price = {
         gte: Number(min_price),
         lte: Number(max_price),
       };
     }
-  
+
     if (room_count) {
       where.room_count = Number(room_count);
     }
-  
+
     if (bathroom_count) {
       where.bathroom_count = Number(bathroom_count);
     }
-  
+
     if (parking_count) {
       where.parking_count = Number(parking_count);
     }
-  
+
     if (min_land_area && max_land_area) {
       where.land_area = {
         gte: Number(min_land_area),
         lte: Number(max_land_area),
       };
     }
-  
+
     if (min_building_area && max_building_area) {
       where.building_area = {
         gte: Number(min_building_area),
         lte: Number(max_building_area),
       };
     }
-  
+
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { location: { contains: search, mode: 'insensitive' } },
       ];
     }
-  
-    const skip = (page - 1) * limit; 
+
+    const skip = (page - 1) * limit;
     const data = await this.prismaService.house.findMany({
       where,
-      skip, 
-      take: limit, 
+      skip,
+      take: limit,
       select: {
         id: true,
         title: true,
@@ -108,25 +106,24 @@ export class HousesService {
         image_url: true,
       },
     });
-  
+
     const totalData = await this.prismaService.house.count({
       where,
     });
-  
+
     return {
       totalData,
       data,
-      totalPages: Math.ceil(totalData / limit), 
-      currentPage: page, 
+      totalPages: Math.ceil(totalData / limit),
+      currentPage: page,
     };
   }
-  
 
   async findOne(id: number) {
     try {
       const house = await this.prismaService.house.findUnique({
         where: {
-          id, 
+          id,
         },
         select: {
           id: true,
@@ -154,5 +151,4 @@ export class HousesService {
       throw new Error(error.message);
     }
   }
-  
 }

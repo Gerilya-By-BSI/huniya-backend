@@ -5,7 +5,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async predictProfileRisk(userId: string) {
     const user = await this.prismaService.user.findUniqueOrThrow({

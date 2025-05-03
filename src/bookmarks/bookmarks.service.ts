@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateHouseBookmarkDto } from '@/houses/dto/create-house-bookmark.dto';
 
@@ -6,7 +10,10 @@ import { CreateHouseBookmarkDto } from '@/houses/dto/create-house-bookmark.dto';
 export class BookmarksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createHouseBookmark(createHouseBookmarkDto: CreateHouseBookmarkDto, user_id: string) {
+  async createHouseBookmark(
+    createHouseBookmarkDto: CreateHouseBookmarkDto,
+    user_id: string,
+  ) {
     const { house_id, tracking_status_id } = createHouseBookmarkDto;
 
     const house = await this.prismaService.house.findUnique({
@@ -20,7 +27,7 @@ export class BookmarksService {
     const existingBookmark = await this.prismaService.houseBookmark.findFirst({
       where: {
         house_id,
-        user_id, 
+        user_id,
       },
     });
 
@@ -56,7 +63,7 @@ export class BookmarksService {
             image_url: true,
             room_count: true,
             bathroom_count: true,
-            parking_count: true
+            parking_count: true,
           },
         },
         tracking_status: {

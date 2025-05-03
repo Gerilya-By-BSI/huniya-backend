@@ -5,7 +5,8 @@ import {
   Body,
   Put,
   UseGuards,
-  NotFoundException, BadRequestException
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -18,13 +19,15 @@ import { User } from '@/auth/decorator/user.decorator';
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
- 
   @Post()
   async createHouseBookmark(
-    @Body() createBookmarkDto: CreateBookmarkDto, 
-    @User('user_id') user_id: string, 
+    @Body() createBookmarkDto: CreateBookmarkDto,
+    @User('user_id') user_id: string,
   ) {
-    return this.bookmarksService.createHouseBookmark(createBookmarkDto, user_id);
+    return this.bookmarksService.createHouseBookmark(
+      createBookmarkDto,
+      user_id,
+    );
   }
 
   @Get()

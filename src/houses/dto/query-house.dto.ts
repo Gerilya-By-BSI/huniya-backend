@@ -58,10 +58,10 @@ export class QueryHouseDto {
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10)) // Convert page to integer
   @IsInt()
-  page: number = 1;  // Default page is 1
+  page: number = 1; // Default page is 1
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10)) // Convert limit to integer
   @IsInt()
-  limit: number = 10;  // Default limit is 10
+  limit: number = 10; // Default limit is 10
 }
