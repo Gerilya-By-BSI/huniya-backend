@@ -9,6 +9,7 @@ import { BigIntInterceptor, TransformInterceptor } from '@/common/interceptors';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HousesModule } from './houses/houses.module';
 import { UserModule } from './user/user.module';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     HousesModule,
     UserModule,
+    BookmarksModule
   ],
   providers: [
     {
