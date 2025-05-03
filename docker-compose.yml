@@ -2,12 +2,11 @@ version: '3.8'
 
 services:
   db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
+    image: postgres:latest
     container_name: db
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     env_file:
@@ -25,9 +24,7 @@ services:
       retries: 5
       
   ml-api:
-    build:
-      context: ./fastapi-ml
-      dockerfile: Dockerfile
+    image: rihlan24/huniya-ml-api:latest
     container_name: ml-api
     restart: unless-stopped
     ports:
@@ -43,9 +40,7 @@ services:
       - huniya
       
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: rihlan24/huniya-api:latest
     container_name: api
     restart: unless-stopped
     ports:
