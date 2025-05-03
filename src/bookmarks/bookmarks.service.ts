@@ -96,29 +96,5 @@ export class BookmarksService {
     return statuses;
   }
 
-  async updateTrackingStatus(
-    userId: string,
-    houseId: number,
-    trackingStatusId: number,
-  ) {
-    const updated = await this.prismaService.houseBookmark.updateMany({
-      where: {
-        user_id: userId,
-        house_id: houseId,
-      },
-      data: {
-        tracking_status_id: trackingStatusId,
-      },
-    });
-
-    if (updated.count === 0) {
-      throw new NotFoundException('Bookmark not found');
-    }
-
-    return {
-      user_id: userId,
-      house_id: houseId,
-      tracking_status_id: trackingStatusId,
-    };
-  }
+  
 }

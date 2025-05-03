@@ -10,6 +10,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HousesModule } from './houses/houses.module';
 import { UserModule } from './user/user.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { AdminModule } from './admin/admin.module';
 import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
@@ -28,6 +29,7 @@ import { UploadsModule } from './uploads/uploads.module';
     HousesModule,
     UserModule,
     BookmarksModule,
+    AdminModule,
     UploadsModule,
   ],
   providers: [

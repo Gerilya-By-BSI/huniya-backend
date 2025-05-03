@@ -54,20 +54,5 @@ async getTrackingStatuses() {
   };
 }
 
-  @Put('status')
-  async updateTrackingStatus(
-    @User() user: any,
-    @Body() dto: UpdateBookmarkDto,
-  ) {
-    const result = await this.bookmarksService.updateTrackingStatus(
-      user.id,
-      dto.house_id,
-      dto.tracking_status_id,
-    );
-
-    return {
-      message: 'Tracking status updated successfully',
-      result,
-    };
-  }
+  
 }
