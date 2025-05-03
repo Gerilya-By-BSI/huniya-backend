@@ -37,7 +37,7 @@ export class UserController {
     const user = await this.userService.predictProfileRisk(userId);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      return BaseResponseDto.error('User not found in core banking', null);
     }
 
     const payload = {
@@ -74,13 +74,26 @@ export class UserController {
 
       const predictionResult = response.data;
 
-      return new BaseResponseDto(true, 'Profile risk prediction successful', {
-        ...user,
-        prediction_result: predictionResult.prediction,
-      });
+      if (!predictionResult || !predictionResult.prediction) {
+        throw new Error('Invalid response from ML API');
+      }
+
+      // Update the user with the prediction result
+      const user = await this.userService.updateProfileRisk(
+        userId,
+        predictionResult.prediction,
+      );
+
+      return BaseResponseDto.success(
+        'Profile risk prediction successful',
+        user,
+      );
     } catch (error) {
       console.error('Error calling ML API:', error.message);
-      return new BaseResponseDto(false, 'Failed to predict profile risk', null);
+      return BaseResponseDto.error(
+        'Error calling ML API: ' + error.message,
+        null,
+      );
     }
   }
 

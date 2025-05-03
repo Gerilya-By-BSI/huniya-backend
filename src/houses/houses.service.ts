@@ -121,30 +121,23 @@ export class HousesService {
 
   async findOne(id: number) {
     try {
-      const house = await this.prismaService.house.findUnique({
+      const house = await this.prismaService.house.findUniqueOrThrow({
         where: {
           id,
         },
-        select: {
-          id: true,
-          title: true,
-          price: true,
-          location: true,
-          room_count: true,
-          bathroom_count: true,
-          parking_count: true,
-          land_area: true,
-          building_area: true,
-          is_sold: true,
-          image_url: true,
-          created_at: true,
-          updated_at: true,
+        include: {
+          admin: {
+            select: {
+              name: true,
+              branch: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
         },
       });
-
-      if (!house) {
-        throw new Error('House not found');
-      }
 
       return house;
     } catch (error) {

@@ -41,6 +41,9 @@ export class HousesController {
   }
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.housesService.findOne(id);
+    return BaseResponseDto.success(
+      'House fetched successfully',
+      await this.housesService.findOne(id),
+    );
   }
 }

@@ -9,7 +9,7 @@ export class BaseResponseDto<T> {
     this.result = data;
   }
 
-  static success<T>(data: T, message: string = 'Success'): BaseResponseDto<T> {
+  static success<T>(message: string = 'Success', data: T): BaseResponseDto<T> {
     return new BaseResponseDto<T>(true, message, data);
   }
 
