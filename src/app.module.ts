@@ -10,6 +10,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HousesModule } from './houses/houses.module';
 import { UserModule } from './user/user.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
     HousesModule,
     UserModule,
     BookmarksModule,
+    AdminModule,
   ],
   providers: [
     {
