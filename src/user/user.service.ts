@@ -24,6 +24,34 @@ export class UserService {
     return coreBankingProfile;
   }
 
+  async getProfile(userId: string) {
+    return this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        phone_number: true,
+        email: true,
+        created_at: true,
+        updated_at: true,
+        profile_risk: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        document: {
+          select: {
+            ktp_url: true,
+            npwp_url: true,
+            payslip_url: true,
+          },
+        },
+      },
+    });
+  }
+  
+
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
