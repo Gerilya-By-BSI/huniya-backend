@@ -7,6 +7,14 @@ import pickle
 import os
 import uvicorn
 import logging
+import warnings
+
+# Filter out various warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", message=".*Valid config keys have changed in V2.*")
+warnings.filterwarnings("ignore", message=".*X does not have valid feature names.*")
+warnings.filterwarnings("ignore", message=".*serialized model.*")
+
 # Import the similar houses recommender
 from similar_houses import recommender
 
