@@ -25,23 +25,6 @@ async getFinancingUsers(@User('user_id') adminId: string) {
   }
 }
 
-  
-  // @Put('update-tracking-status')
-  // async updateTrackingStatus(
-  //   @User() admin: Admin,   // Admin ID akan diambil dari decorator @User
-  //   @Body() dto: UpdateTrackingStatusDto,
-  // ) {
-  //   try {
-  //     console.log('Admin ID:', admin.id);  // Debugging untuk memastikan admin ID ada
-  //     return await this.adminService.updateTrackingStatus(admin.id, dto);
-  //   } catch (error) {
-  //     return {
-  //       message: 'Failed to update tracking status',
-  //       error: error.message,
-  //     };
-  //   }
-  // }
-
   @Put('update-tracking-status')
 async updateTrackingStatus(
   @User('user_id') admin_id: string,   // Langsung ambil admin.id
@@ -57,6 +40,35 @@ async updateTrackingStatus(
     };
   }
 }
+
+
+@Get('list-houses')
+async getHousesByAdmin(@User('user_id') adminId: string) {
+  try {
+    const result = await this.adminService.getHousesByAdmin(adminId);
+    return result; // Mengembalikan hasil dari service
+  } catch (error) {
+    console.error('Error in getHousesByAdmin:', error.message);
+    return {
+      message: 'Failed to retrieve houses by admin',
+      error: error.message,
+    };
+  }
+}
+
+@Get('house-detail/:id')
+  async getHouseDetail(@Param('id') houseId: string, @User('admin_id') adminId: string) {
+    try {
+      const result = await this.adminService.getHouseDetail(Number(houseId), adminId);
+      return result;
+    } catch (error) {
+      return {
+        message: 'Failed to retrieve house details',
+        error: error.message,
+      };
+    }
+  }
+
 
 
 }
