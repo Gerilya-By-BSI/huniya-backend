@@ -1,7 +1,8 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -9,21 +10,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libc-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir \
-    fastapi==0.104.0 \
-    uvicorn==0.23.2 \
-    pydantic==2.4.2 \
-    pandas==2.0.3 \
-    xgboost==2.0.0 \
-    scikit-learn==1.3.0 \
-    python-multipart==0.0.6
+# Copy just the requirements first to leverage Docker cache
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy model files and application code
 COPY ./models/ /app/models/
 COPY main.py .
 
+# Set environment variables
 ENV PORT=5000
 
+# Expose the port
 EXPOSE ${PORT}
 
+# Run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]

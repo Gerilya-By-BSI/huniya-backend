@@ -5,7 +5,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async predictProfileRisk(userId: string) {
     const user = await this.prismaService.user.findUniqueOrThrow({
@@ -20,8 +20,6 @@ export class UserService {
           phone_number: user.phone_number,
         },
       });
-
-    // console.log('coreBankingProfile', coreBankingProfile);
 
     return coreBankingProfile;
   }
@@ -64,6 +62,41 @@ export class UserService {
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
+  }
+
+  async updateProfileRisk(userId: string, predictionResult: string) {
+    const profileRisk = await this.prismaService.profileRisk.findFirstOrThrow({
+      where: {
+        name: predictionResult,
+      },
+    });
+
+    await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        profile_risk_id: profileRisk.id,
+      },
+    });
+
+    return this.prismaService.user.findUniqueOrThrow({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone_number: true,
+        profile_risk_id: true,
+        profile_risk: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

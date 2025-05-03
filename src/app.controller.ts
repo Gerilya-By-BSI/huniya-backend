@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AdminGuard, JwtGuard } from './auth/guard';
 
-@Controller()
+@Controller('/api')
 export class AppController {
   @Get()
   index() {

@@ -11,13 +11,13 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterDto): Promise<BaseResponseDto<any>> {
     const result = await this.authService.register(dto);
-    return BaseResponseDto.success(result, 'User registered successfully');
+    return BaseResponseDto.success('User registered successfully', result);
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto): Promise<BaseResponseDto<any>> {
     const result = await this.authService.login(dto);
-    return BaseResponseDto.success(result, 'Login successful');
+    return BaseResponseDto.success('Login successful', result);
   }
 }

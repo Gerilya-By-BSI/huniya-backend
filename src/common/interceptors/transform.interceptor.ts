@@ -22,7 +22,11 @@ export class TransformInterceptor<T>
           return data;
         }
 
-        return BaseResponseDto.success(data);
+        if (data instanceof Error) {
+          return BaseResponseDto.error(data.message);
+        }
+
+        return BaseResponseDto.success('Success', data);
       }),
     );
   }
