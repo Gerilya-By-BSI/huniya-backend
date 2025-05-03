@@ -11,6 +11,7 @@ import { HousesModule } from './houses/houses.module';
 import { UserModule } from './user/user.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { AdminModule } from './admin/admin.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AdminModule } from './admin/admin.module';
     UserModule,
     BookmarksModule,
     AdminModule,
+    UploadsModule,
   ],
   providers: [
     {

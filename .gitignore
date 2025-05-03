@@ -56,8 +56,15 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-/huniya-seed.sql
+db/init/huniya-seed.sql
 
 .venv
 /fastapi-ml/venv
 fastapi-ml/__pycache__
+
+# File uploads directory (create this in the container)
+# storage
+storage/uploads
+storage/uploads/ktp
+storage/uploads/npwp
+storage/uploads/payslip
