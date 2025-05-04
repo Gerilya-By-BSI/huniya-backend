@@ -32,18 +32,9 @@ export class HousesController {
 
   @Get()
   async findAll(@Query() query: QueryHouseDto) {
-    const { data, totalData } = await this.housesService.findAll(query);
+    const data = await this.housesService.findAll(query);
 
-    if (!data || data.length === 0) {
-      throw new NotFoundException('No houses found');
-    }
-
-    return new BaseResponseDto(true, 'Houses fetched successfully', {
-      total_data: totalData,
-      data,
-      total_pages: Math.ceil(totalData / query.limit), 
-      current_page: query.page, 
-    });
+    return new BaseResponseDto(true, 'Houses fetched successfully', data);
   }
 
   @Get(':id')
