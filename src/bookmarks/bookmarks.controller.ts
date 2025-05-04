@@ -78,7 +78,6 @@ export class BookmarksController {
     }
   }
 
-  // bookmarks.controller.ts
 
 @Get('/details/:houseId')
 async getBookmarkDetail(
