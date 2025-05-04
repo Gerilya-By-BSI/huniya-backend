@@ -15,36 +15,60 @@ export class BookmarksService {
     user_id: string,
   ) {
     const { house_id, tracking_status_id } = createHouseBookmarkDto;
-
+  
     const house = await this.prismaService.house.findUnique({
       where: { id: house_id },
     });
-
+  
     if (!house) {
       throw new BadRequestException('House not found');
     }
-
+  
     const existingBookmark = await this.prismaService.houseBookmark.findFirst({
       where: {
         house_id,
         user_id,
       },
     });
-
+  
     if (existingBookmark) {
       throw new BadRequestException('Bookmark already added');
     }
-
+  
+    // Buat bookmark baru sekaligus ambil relasi tracking_status
     const newBookmark = await this.prismaService.houseBookmark.create({
       data: {
         house_id,
         tracking_status_id,
         user_id,
       },
+      include: {
+        tracking_status: true,
+      },
     });
-
-    return newBookmark;
+  
+    // Fungsi bantu ubah nama jadi Title Case
+    const toTitleCase = (value: string): string => {
+      return value
+        .toLowerCase()
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+  
+    const trackingStatusTitleCase = newBookmark.tracking_status
+      ? toTitleCase(newBookmark.tracking_status.name)
+      : null;
+  
+    return {
+      message: 'Bookmark created successfully',
+      data: {
+        ...newBookmark,
+        tracking_status: trackingStatusTitleCase,
+      },
+    };
   }
+  
 
   async getBookmarkedHouses(userId: string) {
     const bookmarks = await this.prismaService.houseBookmark.findMany({
@@ -74,25 +98,55 @@ export class BookmarksService {
         },
       },
     });
-
+  
+    // Fungsi bantu untuk ubah ke Title Case
+    const toTitleCase = (value: string): string => {
+      return value
+        .toLowerCase()
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+  
     const data = bookmarks.map((bookmark) => ({
       ...bookmark.house,
-      tracking_status: bookmark.tracking_status,
+      tracking_status: bookmark.tracking_status
+        ? {
+            id: bookmark.tracking_status.id,
+            name: toTitleCase(bookmark.tracking_status.name),
+          }
+        : null,
     }));
-
+  
     return {
       totalData: data.length,
       data,
     };
   }
+  
 
   async getTrackingStatuses() {
     const statuses = await this.prismaService.trackingStatus.findMany();
-
+  
     if (!statuses || statuses.length === 0) {
       throw new NotFoundException('No tracking statuses found');
     }
-
-    return statuses;
+  
+    // Fungsi bantu ubah nama
+    const toTitleCase = (value: string): string => {
+      return value
+        .toLowerCase()
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+  
+    const formattedStatuses = statuses.map(status => ({
+      id: status.id,
+      name: toTitleCase(status.name),
+    }));
+  
+    return formattedStatuses;
   }
+  
 }

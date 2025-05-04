@@ -7,6 +7,7 @@ import {
   UseGuards,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -24,33 +25,55 @@ export class BookmarksController {
     @Body() createBookmarkDto: CreateBookmarkDto,
     @User('user_id') user_id: string,
   ) {
-    return this.bookmarksService.createHouseBookmark(
-      createBookmarkDto,
-      user_id,
-    );
-  }
-
-  @Get()
-  async getBookmarkedHouses(@User() user: any) {
-    const result = await this.bookmarksService.getBookmarkedHouses(user.id);
-
-    if (!result.data || result.data.length === 0) {
-      throw new NotFoundException('No bookmarked houses found');
+    try {
+      const result = await this.bookmarksService.createHouseBookmark(
+        createBookmarkDto,
+        user_id,
+      );
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message || 'Failed to create bookmark');
     }
-
-    return {
-      total_data: result.totalData,
-      data: result.data,
-    };
   }
-
+  
+  @Get()
+  async getBookmarkedHouses(@User('user_id') user_id: string) {
+    try {
+      const result = await this.bookmarksService.getBookmarkedHouses(user_id);
+  
+      if (!result.data || result.data.length === 0) {
+        throw new NotFoundException('No bookmarked houses found');
+      }
+  
+      return {
+        total_data: result.totalData,
+        data: result.data,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error.message || 'Failed to retrieve bookmarked houses',
+      );
+    }
+  }
+  
   @Get('status')
   async getTrackingStatuses() {
-    const statuses = await this.bookmarksService.getTrackingStatuses();
-
-    return {
-      message: 'Tracking statuses retrieved successfully',
-      data: statuses,
-    };
+    try {
+      const statuses = await this.bookmarksService.getTrackingStatuses();
+  
+      if (!statuses || statuses.length === 0) {
+        throw new NotFoundException('No tracking statuses found');
+      }
+  
+      return {
+        message: 'Tracking statuses retrieved successfully',
+        data: statuses,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error.message || 'Failed to retrieve tracking statuses',
+      );
+    }
   }
+  
 }

@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHouseDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { QueryHouseDto } from './dto/query-house.dto';
-import { NotFoundException, ConflictException } from '@nestjs/common';
-
 import { Prisma } from '@prisma/client';
-import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
 
 @Injectable()
 export class HousesService {
