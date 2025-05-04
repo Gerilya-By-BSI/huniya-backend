@@ -8,6 +8,8 @@ import {
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
@@ -77,4 +79,41 @@ export class BookmarksController {
       );
     }
   }
+
+
+@Get('/details/:houseId')
+async getBookmarkDetail(
+  @Param('houseId', ParseIntPipe) houseId: number, 
+  @User('user_id') userId: string, 
+) {
+  try {
+    const result = await this.bookmarksService.getBookmarkDetail(userId, houseId);
+
+    return {
+      message: 'Bookmark detail retrieved successfully',
+      data: result,
+    };
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+    throw new BadRequestException('Failed to retrieve bookmark detail');
+  }
+}
+
+@Get('tracker')
+async getTracker() {
+  try {
+    const result = await this.bookmarksService.getTracker();
+    return {
+      message: 'Accepted tracker list retrieved successfully',
+      data: result,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+  
 }
