@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateHouseBookmarkDto } from '@/houses/dto/create-house-bookmark.dto';
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 @Injectable()
 export class BookmarksService {
@@ -99,7 +101,6 @@ export class BookmarksService {
       },
     });
   
-    // Fungsi bantu untuk ubah ke Title Case
     const toTitleCase = (value: string): string => {
       return value
         .toLowerCase()
@@ -148,5 +149,97 @@ export class BookmarksService {
   
     return formattedStatuses;
   }
+
+async getBookmarkDetail(userId: string, houseId: number) {
+  const bookmark = await this.prismaService.houseBookmark.findFirst({
+    where: {
+      user_id: userId,
+      house_id: houseId,
+    },
+    include: {
+      house: true,
+      tracking_status: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone_number: true,
+        },
+      },
+    },
+  });
+
+  if (!bookmark) {
+    throw new NotFoundException('Bookmark not found for this user and house');
+  }
+
+  const toTitleCase = (value: string): string => {
+    return value
+      .toLowerCase()
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  return {
+    house: bookmark.house,
+    tracking_status: {
+      id: bookmark.tracking_status.id,
+      name: toTitleCase(bookmark.tracking_status.name),
+    },
+    user: bookmark.user,
+  };
+}
+
+
+async getTracker() {
+  const bookmarks = await this.prismaService.houseBookmark.findMany({
+    where: {
+      tracking_status_id: 5, // Accepted
+    },
+    include: {
+      house: true,
+      tracking_status: true,
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!bookmarks || bookmarks.length === 0) {
+    throw new NotFoundException('No accepted bookmarks found');
+  }
+
+  function formatDate(date: Date): string {
+    return format(date, 'EEEE, dd MMMM yyyy, HH:mm', { locale: id }); 
+  }
+
+  function toTitleCase(value: string): string {
+    return value
+      .toLowerCase()
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  return bookmarks.map((b) => ({
+    house: {
+      ...b.house,
+      created_at: formatDate(b.house.created_at), // Format tanggal
+      updated_at: formatDate(b.house.updated_at), // Format tanggal
+    },
+    tracking_status: {
+      id: b.tracking_status.id,
+      name: toTitleCase(b.tracking_status.name),
+    },
+    user: {
+      name: b.user.name, 
+    },
+  }));
+}
+
   
 }
