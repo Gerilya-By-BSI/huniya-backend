@@ -85,4 +85,26 @@ export class AdminController {
       };
     }
   }
+
+  @Get('financing-users/:userId/house/:houseId')
+async getFinancingUserDetail(
+  @Param('userId') userId: string,
+  @Param('houseId') houseId: number,
+  @User('user_id') adminId: string,  // Ambil adminId dari JWT
+) {
+  try {
+    console.log(userId,houseId,adminId)
+    const result = await this.adminService.getFinancingUserDetail(adminId, userId, houseId);
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Failed to retrieve financing user detail',
+      error: error.message,
+    };
+  }
+}
+
+
+
 }

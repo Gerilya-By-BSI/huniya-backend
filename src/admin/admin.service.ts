@@ -378,4 +378,117 @@ export class AdminService {
       throw new Error(error.message);
     }
   }
+  
+  async getFinancingUserDetail(adminId: string, userId: string, houseId: number) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone_number: true,
+          profile_risk: {
+            select: {
+              name: true,
+            },
+          },
+          document: {
+            select: {
+              ktp_url: true,
+              npwp_url: true,
+              payslip_url: true,
+              created_at: true,
+            },
+          },
+          house_bookmarks: {
+            where: {
+              house_id: Number(houseId),
+              house: {
+                admin_id: adminId,
+              },
+            },
+            select: {
+              house: {
+                select: {
+                  id: true,
+                  title: true,
+                  price: true,
+                  location: true,
+                  room_count: true,
+                  bathroom_count: true,
+                  parking_count: true,
+                  land_area: true,
+                  building_area: true,
+                  image_url: true,
+                  created_at: true,
+                },
+              },
+              tracking_status: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+  
+      if (!user) {
+        throw new NotFoundException('User or house not found');
+      }
+  
+      const formatDate = (date: Date) => {
+        return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id });
+      };
+  
+      const toTitleCase = (str: string) =>
+        str
+          .toLowerCase()
+          .split('_')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+  
+      const formattedDocuments = user.document
+        ? {
+            ...user.document,
+            created_at: formatDate(user.document.created_at),
+          }
+        : null;
+  
+      const formattedHouseBookmarks = user.house_bookmarks.map((bookmark) => ({
+        house: {
+          ...bookmark.house,
+          created_at: formatDate(bookmark.house.created_at),
+        },
+        tracking_status: bookmark.tracking_status
+          ? {
+              id: bookmark.tracking_status.id,
+              name: toTitleCase(bookmark.tracking_status.name),
+            }
+          : null,
+      }));
+  
+      return {
+        message: 'User financing details retrieved successfully',
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone_number: user.phone_number,
+            profile_risk: user.profile_risk ? user.profile_risk.name : null,
+          },
+          documents: formattedDocuments,
+          house_bookmarks: formattedHouseBookmarks,
+        },
+      };
+    } catch (error) {
+      console.error('Error retrieving financing user detail:', error.message);
+      throw new Error('Failed to retrieve financing user details');
+    }
+  }
+  
+  
 }

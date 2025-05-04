@@ -102,9 +102,9 @@ async getBookmarkDetail(
 }
 
 @Get('tracker')
-async getTracker() {
+async getTracker(@User('user_id') userId: string) {
   try {
-    const result = await this.bookmarksService.getTracker();
+    const result = await this.bookmarksService.getTracker(userId);
     return {
       message: 'Accepted tracker list retrieved successfully',
       data: result,
@@ -113,6 +113,7 @@ async getTracker() {
     throw error;
   }
 }
+
 
 
   
