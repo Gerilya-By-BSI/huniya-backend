@@ -193,10 +193,11 @@ async getBookmarkDetail(userId: string, houseId: number) {
 }
 
 
-async getTracker() {
+async getTracker(userId: string) {
   const bookmarks = await this.prismaService.houseBookmark.findMany({
     where: {
       tracking_status_id: 5, // Accepted
+      user_id: userId,        // Hanya data dari user yang login
     },
     include: {
       house: true,
@@ -210,7 +211,7 @@ async getTracker() {
   });
 
   if (!bookmarks || bookmarks.length === 0) {
-    throw new NotFoundException('No accepted bookmarks found');
+    throw new NotFoundException('No accepted bookmarks found for this user');
   }
 
   function formatDate(date: Date): string {
@@ -228,18 +229,19 @@ async getTracker() {
   return bookmarks.map((b) => ({
     house: {
       ...b.house,
-      created_at: formatDate(b.house.created_at), // Format tanggal
-      updated_at: formatDate(b.house.updated_at), // Format tanggal
+      created_at: formatDate(b.house.created_at),
+      updated_at: formatDate(b.house.updated_at),
     },
     tracking_status: {
       id: b.tracking_status.id,
       name: toTitleCase(b.tracking_status.name),
     },
     user: {
-      name: b.user.name, 
+      name: b.user.name,
     },
   }));
 }
+
 
   
 }
