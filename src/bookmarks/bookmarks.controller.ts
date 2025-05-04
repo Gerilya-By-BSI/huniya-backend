@@ -34,19 +34,21 @@ export class BookmarksController {
       );
       return result;
     } catch (error) {
-      throw new BadRequestException(error.message || 'Failed to create bookmark');
+      throw new BadRequestException(
+        error.message || 'Failed to create bookmark',
+      );
     }
   }
-  
+
   @Get()
   async getBookmarkedHouses(@User('user_id') user_id: string) {
     try {
       const result = await this.bookmarksService.getBookmarkedHouses(user_id);
-  
+
       if (!result.data || result.data.length === 0) {
         throw new NotFoundException('No bookmarked houses found');
       }
-  
+
       return {
         total_data: result.totalData,
         data: result.data,
@@ -57,16 +59,16 @@ export class BookmarksController {
       );
     }
   }
-  
+
   @Get('status')
   async getTrackingStatuses() {
     try {
       const statuses = await this.bookmarksService.getTrackingStatuses();
-  
+
       if (!statuses || statuses.length === 0) {
         throw new NotFoundException('No tracking statuses found');
       }
-  
+
       return {
         message: 'Tracking statuses retrieved successfully',
         data: statuses,

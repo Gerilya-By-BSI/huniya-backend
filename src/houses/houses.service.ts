@@ -2,11 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { QueryHouseDto } from './dto/query-house.dto';
-import { Prisma } from '@prisma/client';
+import { House, Prisma } from '@prisma/client';
+import { PaginationService } from '@/pagination/pagination.service';
 
 @Injectable()
 export class HousesService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly paginationService: PaginationService<House>,
+  ) {}
 
   update(id: number, updateHouseDto: UpdateHouseDto) {
     return this.prismaService.house.update({
@@ -34,8 +38,6 @@ export class HousesService {
       min_building_area,
       max_building_area,
       search,
-      page = 1,
-      limit = 10,
     } = dto;
 
     const where: Prisma.HouseWhereInput = {};
@@ -84,35 +86,51 @@ export class HousesService {
       ];
     }
 
-    const skip = (page - 1) * limit;
+    const total = await this.prismaService.house.count({
+      where,
+    });
+
+    const limit = this.paginationService.validateLimit(dto.limit) || 10;
+    const page =
+      this.paginationService.validatePage(dto.page, total, limit) || 1;
+
     const data = await this.prismaService.house.findMany({
       where,
-      skip,
+      skip: (page - 1) * limit,
       take: limit,
-      select: {
-        id: true,
-        title: true,
-        price: true,
-        location: true,
-        land_area: true,
-        building_area: true,
-        room_count: true,
-        bathroom_count: true,
-        parking_count: true,
-        image_url: true,
-      },
     });
 
-    const totalData = await this.prismaService.house.count({
-      where,
-    });
+    return this.paginationService.paginate(data, total, page, limit);
 
-    return {
-      totalData,
-      data,
-      totalPages: Math.ceil(totalData / limit),
-      currentPage: page,
-    };
+    // const skip = (page - 1) * limit;
+    // const data = await this.prismaService.house.findMany({
+    //   where,
+    //   skip,
+    //   take: limit,
+    //   select: {
+    //     id: true,
+    //     title: true,
+    //     price: true,
+    //     location: true,
+    //     land_area: true,
+    //     building_area: true,
+    //     room_count: true,
+    //     bathroom_count: true,
+    //     parking_count: true,
+    //     image_url: true,
+    //   },
+    // });
+
+    // const totalData = await this.prismaService.house.count({
+    //   where,
+    // });
+
+    // return {
+    //   totalData,
+    //   data,
+    //   totalPages: Math.ceil(totalData / limit),
+    //   currentPage: page,
+    // };
   }
 
   async findOne(id: number) {
