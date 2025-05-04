@@ -490,5 +490,45 @@ export class AdminService {
     }
   }
   
+  async getAdminDetail(adminId: string) {
+    try {
+      const admin = await this.prismaService.admin.findUnique({
+        where: { id: adminId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          created_at: true,
+          updated_at: true,
+          branch: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+  
+      if (!admin) {
+        throw new NotFoundException('Admin not found');
+      }
+  
+      const formatDate = (date: Date) =>
+        format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id });
+  
+      return {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        created_at: formatDate(admin.created_at),
+        updated_at: formatDate(admin.updated_at),
+        branch: admin.branch,
+      };
+    } catch (error) {
+      console.error('Error retrieving admin detail:', error.message);
+      throw new Error('Failed to retrieve admin detail');
+    }
+  }
+  
   
 }
