@@ -41,8 +41,8 @@ export class HousesController {
     return new BaseResponseDto(true, 'Houses fetched successfully', {
       total_data: totalData,
       data,
-      total_pages: Math.ceil(totalData / query.limit), // Total halaman berdasarkan totalData dan limit
-      current_page: query.page, // Halaman saat ini
+      total_pages: Math.ceil(totalData / query.limit), 
+      current_page: query.page, 
     });
   }
 

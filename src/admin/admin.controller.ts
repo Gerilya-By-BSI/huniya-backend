@@ -1,10 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
 import { User } from '@/auth/decorator';
 import { AdminGuard, JwtGuard } from '@/auth/guard';
-import { Admin } from '@prisma/client';
 import { UpdateTrackingStatusDto } from './dto/update-tracking-status.dto';
 import { QueryPaginationDto } from './dto/query-pagination.dto';
 
