@@ -105,6 +105,23 @@ async getFinancingUserDetail(
   }
 }
 
+@Get('detail')
+async getAdminDetail(@User('user_id') adminId: string) {
+  try {
+    const result = await this.adminService.getAdminDetail(adminId);
+    return {
+      message: 'Admin detail retrieved successfully',
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Failed to retrieve admin detail',
+      error: error.message,
+    };
+  }
+}
+
 
 
 }
