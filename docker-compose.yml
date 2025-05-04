@@ -40,7 +40,9 @@ services:
       - huniya
       
   api:
-    image: rihlan24/huniya-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: api
     restart: unless-stopped
     ports:
