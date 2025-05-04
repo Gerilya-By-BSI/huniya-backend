@@ -45,14 +45,12 @@ export class BookmarksController {
   }
 
   @Get('status')
-async getTrackingStatuses() {
-  const statuses = await this.bookmarksService.getTrackingStatuses();
+  async getTrackingStatuses() {
+    const statuses = await this.bookmarksService.getTrackingStatuses();
 
-  return {
-    message: 'Tracking statuses retrieved successfully',
-    data: statuses,
-  };
-}
-
-  
+    return {
+      message: 'Tracking statuses retrieved successfully',
+      data: statuses,
+    };
+  }
 }

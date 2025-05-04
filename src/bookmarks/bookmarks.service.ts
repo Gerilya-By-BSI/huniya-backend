@@ -88,13 +88,11 @@ export class BookmarksService {
 
   async getTrackingStatuses() {
     const statuses = await this.prismaService.trackingStatus.findMany();
-  
+
     if (!statuses || statuses.length === 0) {
       throw new NotFoundException('No tracking statuses found');
     }
-  
+
     return statuses;
   }
-
-  
 }

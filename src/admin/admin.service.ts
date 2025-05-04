@@ -1,108 +1,108 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { UpdateTrackingStatusDto } from './dto/update-tracking-status.dto';
-import { format } from 'date-fns';  // Jika Anda menggunakan date-fns, atau bisa gunakan moment.js
-
+import { format } from 'date-fns'; // Jika Anda menggunakan date-fns, atau bisa gunakan moment.js
 
 @Injectable()
 export class AdminService {
+  constructor(private readonly prismaService: PrismaService) {}
 
-    constructor(private readonly prismaService: PrismaService) {}
-  
-  
-    async getFinancingUsers(admin_id: string) {
-      try {
-        // Debugging: Cek admin_id yang diterima
-        console.log('Admin ID:', admin_id);
-  
-        // Query ke database untuk mengambil data house_bookmarks yang terkait dengan rumah yang dikelola oleh admin
-        const houseBookmarks = await this.prismaService.houseBookmark.findMany({
-          where: {
-            house: {
-              admin_id: admin_id, // Filter berdasarkan admin_id rumah
+  async getFinancingUsers(admin_id: string) {
+    try {
+      // Debugging: Cek admin_id yang diterima
+      console.log('Admin ID:', admin_id);
+
+      // Query ke database untuk mengambil data house_bookmarks yang terkait dengan rumah yang dikelola oleh admin
+      const houseBookmarks = await this.prismaService.houseBookmark.findMany({
+        where: {
+          house: {
+            admin_id: admin_id, // Filter berdasarkan admin_id rumah
+          },
+        },
+        select: {
+          tracking_status: true,
+          created_at: true,
+          updated_at: true,
+          house: {
+            select: {
+              id: true,
+              title: true,
             },
           },
-          select: {
-            tracking_status: true,
-            created_at: true,
-            updated_at: true,
-            house: {
-              select: {
-                id: true,
-                title: true,
-              },
-            },
-            user: {
-              select: {
-                id: true,  // Menambahkan id user
-                name: true,
-                phone_number: true,
-                email: true,
-                profile_risk: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
+          user: {
+            select: {
+              id: true, // Menambahkan id user
+              name: true,
+              phone_number: true,
+              email: true,
+              profile_risk: {
+                select: {
+                  id: true,
+                  name: true,
                 },
               },
             },
           },
-        });
-  
-        // Debugging: Cek hasil query
-        console.log('House bookmarks found:', houseBookmarks);
-        console.log('Total house bookmarks:', houseBookmarks.length);
-  
-        // Format tanggal menjadi "Kamis 10 Juli 2020 19:45"
-        const formatDate = (date: Date) => {
-          return format(date, "eeee dd MMMM yyyy HH:mm"); // Format yang diinginkan
-        };
-  
-        // Jika tidak ada data yang ditemukan
-        if (houseBookmarks.length === 0) {
-          return {
-            totalData: 0,
-            data: [],
-          };
-        }
-  
-        // Map hasil query dan format created_at dan tracking_status sesuai dengan format yang diinginkan
-        const formattedData = houseBookmarks.map(item => ({
-          house: item.house, // House di atas
-          user: {
-            id: item.user.id,  // Menambahkan user_id
-            name: item.user.name,
-            phone_number: item.user.phone_number,
-            email: item.user.email,
-            profile_risk: item.user.profile_risk ? item.user.profile_risk.name : null, // Jika tidak ada profile_risk, kembalikan null
-          },
-          tracking_status: {
-            id: item.tracking_status.id,
-            name: item.tracking_status.name,
-          },
-          created_at: formatDate(item.created_at), // Format created_at di bawah
-        }));
-  
-        // Mengembalikan data sukses dengan format yang diinginkan
-        return {
-          totalData: formattedData.length,
-          data: formattedData,
-        };
-      } catch (error) {
-        // Menangani error jika terjadi masalah saat query atau pemrosesan data
-        console.error('Error retrieving house bookmarks:', error.message);
+        },
+      });
+
+      // Debugging: Cek hasil query
+      console.log('House bookmarks found:', houseBookmarks);
+      console.log('Total house bookmarks:', houseBookmarks.length);
+
+      // Format tanggal menjadi "Kamis 10 Juli 2020 19:45"
+      const formatDate = (date: Date) => {
+        return format(date, 'eeee dd MMMM yyyy HH:mm'); // Format yang diinginkan
+      };
+
+      // Jika tidak ada data yang ditemukan
+      if (houseBookmarks.length === 0) {
         return {
           totalData: 0,
           data: [],
-          error: error.message,
         };
       }
+
+      // Map hasil query dan format created_at dan tracking_status sesuai dengan format yang diinginkan
+      const formattedData = houseBookmarks.map((item) => ({
+        house: item.house, // House di atas
+        user: {
+          id: item.user.id, // Menambahkan user_id
+          name: item.user.name,
+          phone_number: item.user.phone_number,
+          email: item.user.email,
+          profile_risk: item.user.profile_risk
+            ? item.user.profile_risk.name
+            : null, // Jika tidak ada profile_risk, kembalikan null
+        },
+        tracking_status: {
+          id: item.tracking_status.id,
+          name: item.tracking_status.name,
+        },
+        created_at: formatDate(item.created_at), // Format created_at di bawah
+      }));
+
+      // Mengembalikan data sukses dengan format yang diinginkan
+      return {
+        totalData: formattedData.length,
+        data: formattedData,
+      };
+    } catch (error) {
+      // Menangani error jika terjadi masalah saat query atau pemrosesan data
+      console.error('Error retrieving house bookmarks:', error.message);
+      return {
+        totalData: 0,
+        data: [],
+        error: error.message,
+      };
     }
-
-  
-
+  }
 
   async updateTrackingStatus(admin_id: string, dto: UpdateTrackingStatusDto) {
     const { user_id, house_id, tracking_status_id } = dto;
@@ -119,12 +119,16 @@ export class AdminService {
     });
 
     if (!bookmark) {
-      throw new NotFoundException('Bookmark not found for the given user and house');
+      throw new NotFoundException(
+        'Bookmark not found for the given user and house',
+      );
     }
 
     // Validasi admin pemilik rumah (agar admin lain tidak bisa ubah rumah yang bukan miliknya)
     if (bookmark.house.admin_id !== admin_id) {
-      throw new ForbiddenException('You do not have permission to update this tracking status');
+      throw new ForbiddenException(
+        'You do not have permission to update this tracking status',
+      );
     }
 
     // Update tracking_status_id
@@ -155,11 +159,11 @@ export class AdminService {
         select: {
           id: true,
           title: true,
-          parking_count:true,
-          bathroom_count:true,
-          room_count:true,
-          price:true,
-          image_url:true,
+          parking_count: true,
+          bathroom_count: true,
+          room_count: true,
+          price: true,
+          image_url: true,
           house_bookmarks: {
             select: {
               user: {
@@ -180,14 +184,14 @@ export class AdminService {
           },
         },
       });
-  
+
       const result = houses.map((house) => ({
         id: house.id,
         title: house.title,
-        parking_count:house.parking_count,
-        bathroom_count:house.bathroom_count,
-        room_count:house.room_count,
-        price:house.price,
+        parking_count: house.parking_count,
+        bathroom_count: house.bathroom_count,
+        room_count: house.room_count,
+        price: house.price,
         img_url: house.image_url,
         totalBookmarks: house.house_bookmarks.length,
         users: house.house_bookmarks.map((bookmark) => ({
@@ -198,10 +202,10 @@ export class AdminService {
           profile_risk: bookmark.user.profile_risk,
         })),
       }));
-  
+
       return {
-          totalData: result.length,
-          data: result,
+        totalData: result.length,
+        data: result,
       };
     } catch (error) {
       console.error('Error in getHouseByAdmin:', error);
@@ -212,8 +216,6 @@ export class AdminService {
       };
     }
   }
-  
-
 
   // async getHouseDetail(houseId: number, adminId: string) {
   //   try {
@@ -235,11 +237,11 @@ export class AdminService {
   //         },
   //       },
   //     });
-  
+
   //     if (!house) {
   //       throw new Error("House not found or not owned by the authenticated admin");
   //     }
-  
+
   //     // Menyiapkan response data
   //     const houseDetails = {
   //       id: house.id,
@@ -267,7 +269,7 @@ export class AdminService {
   //         },
   //       })),
   //     };
-  
+
   //     return {
   //       message: "House details retrieved successfully",
   //       data: houseDetails,
@@ -298,14 +300,14 @@ export class AdminService {
           },
         },
       });
-  
-      console.log(adminId)
-      console.log(house)
+
+      console.log(adminId);
+      console.log(house);
       // Jika rumah tidak ditemukan atau admin tidak memiliki rumah tersebut, throw error
       if (!house) {
-        throw new Error("You are not authorized to view this house details.");
+        throw new Error('You are not authorized to view this house details.');
       }
-  
+
       // Menyiapkan response data
       const houseDetails = {
         id: house.id,
@@ -319,29 +321,30 @@ export class AdminService {
         building_area: house.building_area,
         image_url: house.image_url,
         created_at: house.created_at,
-        totalData: house.house_bookmarks.length, 
+        totalData: house.house_bookmarks.length,
         house_bookmarks: house.house_bookmarks.map((bookmark) => ({
           user: {
             name: bookmark.user.name,
-            profile_risk: bookmark.user.profile_risk ? { id: bookmark.user.profile_risk.id, name: bookmark.user.profile_risk.name } : null,  // Jika tidak ada profile_risk, set null
+            profile_risk: bookmark.user.profile_risk
+              ? {
+                  id: bookmark.user.profile_risk.id,
+                  name: bookmark.user.profile_risk.name,
+                }
+              : null, // Jika tidak ada profile_risk, set null
           },
           tracking_status: {
-            id: bookmark.tracking_status.id,  // Menambahkan ID dari tracking_status
+            id: bookmark.tracking_status.id, // Menambahkan ID dari tracking_status
             name: bookmark.tracking_status.name,
           },
         })),
       };
-  
+
       return {
-        message: "House details retrieved successfully",
+        message: 'House details retrieved successfully',
         data: houseDetails,
       };
     } catch (error) {
       throw new Error(error.message);
     }
   }
-  
-  
-  
-  
 }
