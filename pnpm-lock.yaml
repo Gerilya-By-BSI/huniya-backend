@@ -59,6 +59,9 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       multer:
         specifier: 1.4.5-lts.2
         version: 1.4.5-lts.2
