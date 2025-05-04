@@ -31,8 +31,6 @@ services:
       - "5000:5000"
     env_file:
       - ./fastapi-ml/.env
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-huniya}
     depends_on:
       db:
         condition: service_healthy
@@ -40,7 +38,9 @@ services:
       - huniya
       
   api:
-    image: rihlan24/huniya-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: api
     restart: unless-stopped
     ports:
@@ -48,7 +48,6 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-huniya}?schema=public
       - FASTAPI_URL=http://ml-api:5000
     depends_on:
       db:

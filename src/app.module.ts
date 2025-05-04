@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { AdminModule } from './admin/admin.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { ValidationExceptionFilter } from './common/filters/validation-exception.filter';
 
 @Module({
   imports: [
@@ -38,6 +39,10 @@ import { UploadsModule } from './uploads/uploads.module';
       useValue: new ValidationPipe({
         whitelist: true,
       }),
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ValidationExceptionFilter,
     },
     {
       provide: APP_FILTER,

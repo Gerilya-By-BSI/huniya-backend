@@ -292,6 +292,10 @@ export class AdminService {
         bathroom_count: house.bathroom_count,
         room_count: house.room_count,
         price: house.price,
+        parking_count: house.parking_count,
+        bathroom_count: house.bathroom_count,
+        room_count: house.room_count,
+        price: house.price,
         img_url: house.image_url,
         created_at: formatDate(house.created_at),
         totalPotentialUser: house.house_bookmarks.length,
@@ -303,7 +307,7 @@ export class AdminService {
           bookmarked_at: formatDate(bookmark.created_at),
         })),
       }));
-  
+
       return {
         totalData,
         totalPages: Math.ceil(totalData / limit),
@@ -344,7 +348,7 @@ export class AdminService {
       });
   
       if (!house) {
-        throw new Error("You are not authorized to view this house details.");
+        throw new Error('You are not authorized to view this house details.');
       }
   
       // Fungsi bantu untuk konversi ke Title Case dengan spasi jika ada underscore
@@ -393,9 +397,9 @@ export class AdminService {
             : null,  // Jika tidak ada tracking_status, set null
         })),
       };
-  
+
       return {
-        message: "House details retrieved successfully",
+        message: 'House details retrieved successfully',
         data: houseDetails,
       };
     } catch (error) {

@@ -48,22 +48,22 @@ async updateTrackingStatus(
   }
 }
 
-@Get('list-houses')
-async getHousesByAdmin(
+  @Get('list-houses')
+  async getHousesByAdmin(
   @User('user_id') adminId: string,
   @Query() query: QueryPaginationDto,
 ) {
-  try {
-    const result = await this.adminService.getHousesByAdmin(adminId, query.page, query.limit);
-    return result;
-  } catch (error) {
-    return {
-      success: false,
+    try {
+      const result = await this.adminService.getHousesByAdmin(adminId, query.page, query.limit);
+      return result;
+    } catch (error) {
+        return {
+        success: false,
       message: 'Failed to retrieve houses by admin',
-      error: error.message,
-    };
+        error: error.message,
+      };
+    }
   }
-}
 
 
 @Get('house-detail/:id')
