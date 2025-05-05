@@ -28,7 +28,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
         : [exceptionResponse.message];
 
       return response.status(status).json(
-        BaseResponseDto.error('Validation failed', {
+        BaseResponseDto.error(exceptionResponse.message, {
           errors: validationErrors,
         }),
       );
