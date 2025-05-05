@@ -94,10 +94,10 @@ async function createTrackingStatuses() {
   console.log('Created 7 tracking statuses');
 }
 
-async function main() {
+function main() {
   // await createProfileRisks();
-  await createBranches();
-  await createAdmins();
+  // await createBranches();
+  // await createAdmins();
   // await createTrackingStatuses();
 
   console.log('Seeding completed');

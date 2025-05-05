@@ -37,9 +37,9 @@ export class AdminService {
     const houseBookmarks = await this.prismaService.houseBookmark.findMany({
       where,
       skip: (page - 1) * limit,
-      take: limit, 
+      take: limit,
       orderBy: {
-        created_at: 'desc', 
+        created_at: 'desc',
       },
       select: {
         tracking_status: true,
@@ -89,12 +89,12 @@ export class AdminService {
         email: item.user.email,
         profile_risk: item.user.profile_risk
           ? toTitleCase(item.user.profile_risk.name)
-          : null, 
+          : null,
       },
       tracking_status: item.tracking_status
         ? toTitleCase(item.tracking_status.name)
-        : null, 
-      created_at: formatDate(item.created_at), 
+        : null,
+      created_at: formatDate(item.created_at),
     }));
 
     return this.paginationService.paginate(formattedData, total, page, limit);
@@ -210,11 +210,11 @@ export class AdminService {
           admin_id: adminId,
         },
       });
-  
+
       const limit = this.paginationService.validateLimit(dto.limit) || 10;
       const page =
         this.paginationService.validatePage(dto.page, total, limit) || 1;
-  
+
       const houses = await this.prismaService.house.findMany({
         where: {
           admin_id: adminId,
@@ -250,7 +250,7 @@ export class AdminService {
           },
         },
       });
-  
+
       const toTitleCase = (value: string): string => {
         return value
           .toLowerCase()
@@ -258,11 +258,11 @@ export class AdminService {
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
       };
-  
+
       const formatDate = (date: Date) => {
         return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id });
       };
-  
+
       // Format data
       const result = houses.map((house) => ({
         id: house.id,
@@ -282,10 +282,10 @@ export class AdminService {
           bookmarked_at: formatDate(bookmark.created_at),
         })),
       }));
-  
+
       // Sort berdasarkan total_potential_users terbanyak
       result.sort((a, b) => b.total_potential_users - a.total_potential_users);
-  
+
       return this.paginationService.paginate(result, total, page, limit);
     } catch (error) {
       console.error('Error in getHouseByAdmin:', error);
@@ -296,7 +296,6 @@ export class AdminService {
       };
     }
   }
-  
 
   async getHouseDetail(houseId: number, adminId: string) {
     try {

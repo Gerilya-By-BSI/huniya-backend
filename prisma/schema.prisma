@@ -37,18 +37,19 @@ model User {
   password        String
   created_at      DateTime        @default(now())
   updated_at      DateTime        @updatedAt
-  profile_risk_id Int?            @unique
+  profile_risk_id Int?
   document        Document?
   house_bookmarks HouseBookmark[]
   profile_risk    ProfileRisk?    @relation(fields: [profile_risk_id], references: [id])
 
+  @@index([profile_risk_id], map: "users_profile_risk_id_key")
   @@map("users")
 }
 
 model ProfileRisk {
-  id   Int    @id @default(autoincrement())
-  name String
-  user User?
+  id    Int    @id @default(autoincrement())
+  name  String
+  users User[]
 
   @@map("profile_risks")
 }
@@ -99,12 +100,12 @@ model TrackingStatus {
 
 model HouseBookmark {
   id                 Int            @id @default(autoincrement())
-  tenor              Int
   created_at         DateTime       @default(now())
   updated_at         DateTime       @updatedAt
   user_id            String
   house_id           Int
   tracking_status_id Int
+  tenor              Int
   house              House          @relation(fields: [house_id], references: [id])
   tracking_status    TrackingStatus @relation(fields: [tracking_status_id], references: [id])
   user               User           @relation(fields: [user_id], references: [id])

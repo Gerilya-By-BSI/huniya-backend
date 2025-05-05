@@ -33,6 +33,9 @@ export class BookmarksController {
         createBookmarkDto,
         user_id,
       );
+
+      // Need to hit predict Nestjs /profile-risk/predict
+
       return result;
     } catch (error) {
       throw new BadRequestException(
