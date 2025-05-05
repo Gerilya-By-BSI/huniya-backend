@@ -14,6 +14,6 @@ jobs:
         run: |
           cd ~/actions-runner/_work/huniya-backend/huniya-backend
           git pull origin main
-          docker-compose down
+          docker-compose down -v
           docker-compose build
           docker-compose up -d
