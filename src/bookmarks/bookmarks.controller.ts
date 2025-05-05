@@ -16,6 +16,7 @@ import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { JwtGuard } from '@/auth/guard';
 import { User } from '@/auth/decorator/user.decorator';
+import { BaseResponseDto } from '@/common/dto/base-response.dto';
 
 @UseGuards(JwtGuard)
 @Controller('bookmarks')
@@ -46,7 +47,7 @@ export class BookmarksController {
       const result = await this.bookmarksService.getBookmarkedHouses(user_id);
 
       if (!result.data || result.data.length === 0) {
-        throw new NotFoundException('No bookmarked houses found');
+        return BaseResponseDto.error('No bookmarked houses found', []);
       }
 
       return {

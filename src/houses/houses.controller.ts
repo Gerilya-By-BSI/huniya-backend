@@ -54,8 +54,6 @@ export class HousesController {
       this.httpService.post(`${fastApiUrl}/api/similar-houses/`, payload),
     );
 
-    console.log('similar: ', response.data);
-
     const similarHouses = await this.housesService.findSimilarHouses(
       response.data.similar_houses,
     );

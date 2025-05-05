@@ -4,6 +4,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { QueryHouseDto } from './dto/query-house.dto';
 import { House, Prisma } from '@prisma/client';
 import { PaginationService } from '@/pagination/pagination.service';
+import { BaseResponseDto } from '@/common/dto/base-response.dto';
 
 @Injectable()
 export class HousesService {
@@ -91,7 +92,10 @@ export class HousesService {
     });
 
     if (total === 0) {
-      throw new NotFoundException('No houses found');
+      return BaseResponseDto.error(
+        'No houses found with the given criteria',
+        [],
+      );
     }
 
     const limit = this.paginationService.validateLimit(dto.limit) || 10;
