@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateHouseBookmarkDto } from '@/houses/dto/create-house-bookmark.dto';
+import { CreateBookmarkDto } from '@/bookmarks/dto/create-bookmark.dto';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
@@ -12,11 +12,8 @@ import { id } from 'date-fns/locale';
 export class BookmarksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createHouseBookmark(
-    createHouseBookmarkDto: CreateHouseBookmarkDto,
-    user_id: string,
-  ) {
-    const { house_id, tracking_status_id } = createHouseBookmarkDto;
+  async createHouseBookmark(dto: CreateBookmarkDto, user_id: string) {
+    const { house_id, tracking_status_id, tenor } = dto;
 
     const house = await this.prismaService.house.findUnique({
       where: { id: house_id },
@@ -40,6 +37,7 @@ export class BookmarksService {
     // Buat bookmark baru sekaligus ambil relasi tracking_status
     const newBookmark = await this.prismaService.houseBookmark.create({
       data: {
+        tenor: tenor,
         house_id,
         tracking_status_id,
         user_id,
@@ -76,7 +74,9 @@ export class BookmarksService {
       where: {
         user_id: userId,
       },
-      include: {
+      select: {
+        id: true,
+        tenor: true,
         house: {
           select: {
             id: true,
@@ -109,7 +109,7 @@ export class BookmarksService {
     };
 
     const data = bookmarks.map((bookmark) => ({
-      ...bookmark.house,
+      ...bookmark,
       tracking_status: bookmark.tracking_status
         ? {
             id: bookmark.tracking_status.id,
@@ -154,7 +154,9 @@ export class BookmarksService {
         user_id: userId,
         house_id: houseId,
       },
-      include: {
+      select: {
+        id: true,
+        tenor: true,
         house: true,
         tracking_status: true,
         user: {
@@ -181,6 +183,7 @@ export class BookmarksService {
     };
 
     return {
+      tenor: bookmark.tenor,
       house: bookmark.house,
       tracking_status: {
         id: bookmark.tracking_status.id,
@@ -224,6 +227,8 @@ export class BookmarksService {
     }
 
     return bookmarks.map((b) => ({
+      id: b.id,
+      tenor: b.tenor,
       house: {
         ...b.house,
         created_at: formatDate(b.house.created_at),

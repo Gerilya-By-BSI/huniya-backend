@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  // output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,9 +8,8 @@ datasource db {
 }
 
 model Branch {
-  id   Int    @id @default(autoincrement())
-  name String
-
+  id     Int     @id @default(autoincrement())
+  name   String
   admins Admin[]
 
   @@map("branches")
@@ -30,29 +22,25 @@ model Admin {
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  branch_id Int
-  branch    Branch @relation(fields: [branch_id], references: [id])
-
-  houses House[]
+  branch_id  Int
+  branch     Branch   @relation(fields: [branch_id], references: [id])
+  houses     House[]
 
   @@map("admins")
 }
 
 model User {
-  id           String   @id @default(nanoid())
-  name         String
-  phone_number String   @unique
-  email        String   @unique
-  password     String
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
-
+  id              String          @id @default(nanoid())
+  name            String
+  phone_number    String          @unique
+  email           String          @unique
+  password        String
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
   profile_risk_id Int?            @unique
   document        Document?
   house_bookmarks HouseBookmark[]
-
-  profile_risk ProfileRisk? @relation(fields: [profile_risk_id], references: [id])
+  profile_risk    ProfileRisk?    @relation(fields: [profile_risk_id], references: [id])
 
   @@map("users")
 }
@@ -60,7 +48,6 @@ model User {
 model ProfileRisk {
   id   Int    @id @default(autoincrement())
   name String
-
   user User?
 
   @@map("profile_risks")
@@ -73,67 +60,61 @@ model Document {
   payslip_url String?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
 
   @@map("documents")
 }
 
 model House {
-  id             Int      @id @default(autoincrement())
-  title          String
-  price          Int
-  location       String
-  room_count     Int
-  bathroom_count Int
-  parking_count  Int
-  land_area      Int
-  building_area  Int
-  index          Int
-  is_sold        Boolean  @default(false)
-  image_url      String
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
-
+  id              Int             @id @default(autoincrement())
+  title           String
+  price           Int
+  location        String
+  room_count      Int
+  bathroom_count  Int
+  parking_count   Int
+  land_area       Int
+  building_area   Int
+  index           Int
+  is_sold         Boolean         @default(false)
+  image_url       String
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  admin_id        String
   house_bookmarks HouseBookmark[]
+  admin           Admin           @relation(fields: [admin_id], references: [id])
 
-  admin_id String
-  admin    Admin  @relation(fields: [admin_id], references: [id])
-
-  @@index(id, name: "houses_id_index")
+  @@index([id], map: "houses_id_index")
   @@map("houses")
 }
 
 model TrackingStatus {
-  id   Int    @id @default(autoincrement())
-  name String
-
+  id              Int             @id @default(autoincrement())
+  name            String
   house_bookmarks HouseBookmark[]
 
   @@map("tracking_status")
 }
 
 model HouseBookmark {
-  id         Int      @id @default(autoincrement())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
-
-  house_id Int
-  house    House @relation(fields: [house_id], references: [id])
-
+  id                 Int            @id @default(autoincrement())
+  tenor              Int
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  user_id            String
+  house_id           Int
   tracking_status_id Int
+  house              House          @relation(fields: [house_id], references: [id])
   tracking_status    TrackingStatus @relation(fields: [tracking_status_id], references: [id])
+  user               User           @relation(fields: [user_id], references: [id])
 
   @@map("house_bookmarks")
 }
 
 model CoreBankingUser {
-  id                        Int     @id @default(autoincrement())
-  phone_number              String  @unique
+  id                        Int       @id @default(autoincrement())
+  phone_number              String    @unique
   age                       Int
   occupation                String?
   annual_income             BigInt
@@ -147,17 +128,16 @@ model CoreBankingUser {
   num_of_delayed_payments   Float
   changed_credit_limit      Float
   num_credit_inquiries      Float
-  credit_mix                Int
   outstanding_debt          Float
   credit_history_age        Float
   payment_of_minimum_amount Int
   total_emi_per_month       BigInt
-  payment_behaviour         Int
   monthly_balance           BigInt
+  created_at                DateTime? @default(now())
+  updated_at                DateTime? @updatedAt
+  credit_mix                Int
+  payment_behaviour         Int
 
-  created_at DateTime?  @default(now())
-  updated_at DateTime? @updatedAt
-
-  @@index([phone_number], name: "core_banking_user_phone_number_index")
+  @@index([phone_number], map: "core_banking_user_phone_number_index")
   @@map("core_banking_users")
 }

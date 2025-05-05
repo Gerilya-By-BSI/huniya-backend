@@ -337,7 +337,41 @@ export class AdminService {
         return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id }); // Format dengan lokal Indonesia
       };
 
-      // Menyiapkan response data
+      const bookmarkPromises = house.house_bookmarks.map(async (bookmark) => {
+        const coreBankingUser =
+          await this.prismaService.coreBankingUser.findFirst({
+            where: {
+              phone_number: bookmark.user.phone_number,
+            },
+            select: {
+              monthly_inhand_salary: true,
+            },
+          });
+
+        return {
+          user: {
+            name: bookmark.user.name,
+            profile_risk: bookmark.user.profile_risk
+              ? {
+                  id: bookmark.user.profile_risk.id,
+                  name: toTitleCase(bookmark.user.profile_risk.name),
+                }
+              : null,
+            salary: Number(coreBankingUser?.monthly_inhand_salary) || 0,
+          },
+          tracking_status: bookmark.tracking_status
+            ? {
+                id: bookmark.tracking_status.id,
+                name: toTitleCase(bookmark.tracking_status.name),
+              }
+            : null,
+        };
+      });
+
+      // Wait for all bookmark promises to resolve
+      const resolvedBookmarks = await Promise.all(bookmarkPromises);
+
+      // Now create your houseDetails object with the resolved data
       const houseDetails = {
         id: house.id,
         title: house.title,
@@ -349,25 +383,9 @@ export class AdminService {
         land_area: house.land_area,
         building_area: house.building_area,
         image_url: house.image_url,
-        created_at: formatDate(house.created_at), // Menggunakan format lokal Indonesia
+        created_at: formatDate(house.created_at),
         totalData: house.house_bookmarks.length,
-        house_bookmarks: house.house_bookmarks.map((bookmark) => ({
-          user: {
-            name: bookmark.user.name,
-            profile_risk: bookmark.user.profile_risk
-              ? {
-                  id: bookmark.user.profile_risk.id,
-                  name: toTitleCase(bookmark.user.profile_risk.name), // Mengubah profile_risk ke Title Case
-                }
-              : null, // Jika tidak ada profile_risk, set null
-          },
-          tracking_status: bookmark.tracking_status
-            ? {
-                id: bookmark.tracking_status.id,
-                name: toTitleCase(bookmark.tracking_status.name), // Mengubah tracking_status ke Title Case
-              }
-            : null, // Jika tidak ada tracking_status, set null
-        })),
+        house_bookmarks: resolvedBookmarks,
       };
 
       return {
