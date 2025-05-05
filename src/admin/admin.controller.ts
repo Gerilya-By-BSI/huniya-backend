@@ -87,41 +87,42 @@ export class AdminController {
   }
 
   @Get('financing-users/:userId/house/:houseId')
-async getFinancingUserDetail(
-  @Param('userId') userId: string,
-  @Param('houseId') houseId: number,
-  @User('user_id') adminId: string,  // Ambil adminId dari JWT
-) {
-  try {
-    console.log(userId,houseId,adminId)
-    const result = await this.adminService.getFinancingUserDetail(adminId, userId, houseId);
-    return result;
-  } catch (error) {
-    return {
-      success: false,
-      message: 'Failed to retrieve financing user detail',
-      error: error.message,
-    };
+  async getFinancingUserDetail(
+    @Param('userId') userId: string,
+    @Param('houseId') houseId: number,
+    @User('user_id') adminId: string, // Ambil adminId dari JWT
+  ) {
+    try {
+      console.log(userId, houseId, adminId);
+      const result = await this.adminService.getFinancingUserDetail(
+        adminId,
+        userId,
+        houseId,
+      );
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve financing user detail',
+        error: error.message,
+      };
+    }
   }
-}
 
-@Get('detail')
-async getAdminDetail(@User('user_id') adminId: string) {
-  try {
-    const result = await this.adminService.getAdminDetail(adminId);
-    return {
-      message: 'Admin detail retrieved successfully',
-      data: result,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: 'Failed to retrieve admin detail',
-      error: error.message,
-    };
+  @Get('detail')
+  async getAdminDetail(@User('user_id') adminId: string) {
+    try {
+      const result = await this.adminService.getAdminDetail(adminId);
+      return {
+        message: 'Admin detail retrieved successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve admin detail',
+        error: error.message,
+      };
+    }
   }
-}
-
-
-
 }

@@ -80,41 +80,35 @@ export class BookmarksController {
     }
   }
 
+  @Get('/details/:houseId')
+  async getBookmarkDetail(
+    @Param('houseId', ParseIntPipe) houseId: number,
+    @User('user_id') userId: string,
+  ) {
+    try {
+      const result = await this.bookmarksService.getBookmarkDetail(
+        userId,
+        houseId,
+      );
 
-@Get('/details/:houseId')
-async getBookmarkDetail(
-  @Param('houseId', ParseIntPipe) houseId: number, 
-  @User('user_id') userId: string, 
-) {
-  try {
-    const result = await this.bookmarksService.getBookmarkDetail(userId, houseId);
-
-    return {
-      message: 'Bookmark detail retrieved successfully',
-      data: result,
-    };
-  } catch (error) {
-    if (error instanceof NotFoundException) {
-      throw error;
+      return {
+        message: 'Bookmark detail retrieved successfully',
+        data: result,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to retrieve bookmark detail');
     }
-    throw new BadRequestException('Failed to retrieve bookmark detail');
   }
-}
 
-@Get('tracker')
-async getTracker(@User('user_id') userId: string) {
-  try {
+  @Get('tracker')
+  async getTracker(@User('user_id') userId: string) {
     const result = await this.bookmarksService.getTracker(userId);
     return {
       message: 'Accepted tracker list retrieved successfully',
       data: result,
     };
-  } catch (error) {
-    throw error;
   }
-}
-
-
-
-  
 }

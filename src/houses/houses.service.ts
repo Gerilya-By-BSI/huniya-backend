@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { QueryHouseDto } from './dto/query-house.dto';
@@ -89,6 +89,10 @@ export class HousesService {
     const total = await this.prismaService.house.count({
       where,
     });
+
+    if (total === 0) {
+      throw new NotFoundException('No houses found');
+    }
 
     const limit = this.paginationService.validateLimit(dto.limit) || 10;
     const page =

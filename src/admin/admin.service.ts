@@ -378,8 +378,12 @@ export class AdminService {
       throw new Error(error.message);
     }
   }
-  
-  async getFinancingUserDetail(adminId: string, userId: string, houseId: number) {
+
+  async getFinancingUserDetail(
+    adminId: string,
+    userId: string,
+    houseId: number,
+  ) {
     try {
       const user = await this.prismaService.user.findUnique({
         where: { id: userId },
@@ -434,29 +438,29 @@ export class AdminService {
           },
         },
       });
-  
+
       if (!user) {
         throw new NotFoundException('User or house not found');
       }
-  
+
       const formatDate = (date: Date) => {
         return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id });
       };
-  
+
       const toTitleCase = (str: string) =>
         str
           .toLowerCase()
           .split('_')
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
-  
+
       const formattedDocuments = user.document
         ? {
             ...user.document,
             created_at: formatDate(user.document.created_at),
           }
         : null;
-  
+
       const formattedHouseBookmarks = user.house_bookmarks.map((bookmark) => ({
         house: {
           ...bookmark.house,
@@ -469,7 +473,7 @@ export class AdminService {
             }
           : null,
       }));
-  
+
       return {
         message: 'User financing details retrieved successfully',
         data: {
@@ -489,7 +493,7 @@ export class AdminService {
       throw new Error('Failed to retrieve financing user details');
     }
   }
-  
+
   async getAdminDetail(adminId: string) {
     try {
       const admin = await this.prismaService.admin.findUnique({
@@ -508,14 +512,14 @@ export class AdminService {
           },
         },
       });
-  
+
       if (!admin) {
         throw new NotFoundException('Admin not found');
       }
-  
+
       const formatDate = (date: Date) =>
         format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id });
-  
+
       return {
         id: admin.id,
         name: admin.name,
@@ -529,6 +533,4 @@ export class AdminService {
       throw new Error('Failed to retrieve admin detail');
     }
   }
-  
-  
 }
