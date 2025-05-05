@@ -13,9 +13,6 @@ import { JwtGuard } from '@/auth/guard';
 import { QueryHouseDto } from './dto/query-house.dto';
 import { BaseResponseDto } from '@/common/dto/base-response.dto';
 import { NotFoundException } from '@nestjs/common';
-import { User } from '@/auth/decorator/user.decorator';
-import { HouseTrackingStatusDto } from './dto/update-tracking-status.dto'; // Pastikan path-nya sesuai
-import { CreateHouseBookmarkDto } from './dto/create-house-bookmark.dto';
 import { ParseIntPipe } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';

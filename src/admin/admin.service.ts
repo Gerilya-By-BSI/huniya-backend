@@ -36,10 +36,10 @@ export class AdminService {
 
     const houseBookmarks = await this.prismaService.houseBookmark.findMany({
       where,
-      skip: (page - 1) * limit, // Apply skip for pagination
-      take: limit, // Apply limit to get only a specific number of records
+      skip: (page - 1) * limit,
+      take: limit, 
       orderBy: {
-        created_at: 'desc', // Order by created_at in descending order
+        created_at: 'desc', 
       },
       select: {
         tracking_status: true,
@@ -72,7 +72,6 @@ export class AdminService {
       return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id }); // Format with Indonesian locale
     };
 
-    // Helper function to convert ENUM to Title Case with spaces
     const toTitleCase = (value: string): string => {
       return value
         .toLowerCase()
@@ -81,7 +80,6 @@ export class AdminService {
         .join(' ');
     };
 
-    // Format data for response
     const formattedData = houseBookmarks.map((item) => ({
       house: item.house,
       user: {
@@ -91,12 +89,12 @@ export class AdminService {
         email: item.user.email,
         profile_risk: item.user.profile_risk
           ? toTitleCase(item.user.profile_risk.name)
-          : null, // Convert profile_risk name to Title Case if available
+          : null, 
       },
       tracking_status: item.tracking_status
         ? toTitleCase(item.tracking_status.name)
-        : null, // Convert tracking_status name to Title Case if available
-      created_at: formatDate(item.created_at), // Format created_at with Indonesian locale
+        : null, 
+      created_at: formatDate(item.created_at), 
     }));
 
     return this.paginationService.paginate(formattedData, total, page, limit);
@@ -212,17 +210,15 @@ export class AdminService {
           admin_id: adminId,
         },
       });
-
+  
       const limit = this.paginationService.validateLimit(dto.limit) || 10;
       const page =
         this.paginationService.validatePage(dto.page, total, limit) || 1;
-
+  
       const houses = await this.prismaService.house.findMany({
         where: {
           admin_id: adminId,
         },
-        skip: (page - 1) * limit,
-        take: limit,
         orderBy: [{ created_at: 'desc' }, { id: 'asc' }],
         select: {
           id: true,
@@ -254,7 +250,7 @@ export class AdminService {
           },
         },
       });
-
+  
       const toTitleCase = (value: string): string => {
         return value
           .toLowerCase()
@@ -262,11 +258,12 @@ export class AdminService {
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
       };
-
+  
       const formatDate = (date: Date) => {
         return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id });
       };
-
+  
+      // Format data
       const result = houses.map((house) => ({
         id: house.id,
         title: house.title,
@@ -285,7 +282,10 @@ export class AdminService {
           bookmarked_at: formatDate(bookmark.created_at),
         })),
       }));
-
+  
+      // Sort berdasarkan total_potential_users terbanyak
+      result.sort((a, b) => b.total_potential_users - a.total_potential_users);
+  
       return this.paginationService.paginate(result, total, page, limit);
     } catch (error) {
       console.error('Error in getHouseByAdmin:', error);
@@ -296,6 +296,7 @@ export class AdminService {
       };
     }
   }
+  
 
   async getHouseDetail(houseId: number, adminId: string) {
     try {
@@ -337,7 +338,6 @@ export class AdminService {
         return format(date, 'eeee dd MMMM yyyy HH:mm', { locale: id }); // Format dengan lokal Indonesia
       };
 
-      // Menyiapkan response data
       const houseDetails = {
         id: house.id,
         title: house.title,
