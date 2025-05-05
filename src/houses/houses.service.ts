@@ -41,7 +41,8 @@ export class HousesService {
       search,
     } = dto;
 
-    const where: Prisma.HouseWhereInput = {};
+    const where: Prisma.HouseWhereInput = {
+    };
 
     if (location) {
       where.location = { contains: location, mode: 'insensitive' };
@@ -106,39 +107,13 @@ export class HousesService {
       where,
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        price: 'asc', 
+      },
     });
 
     return this.paginationService.paginate(data, total, page, limit);
 
-    // const skip = (page - 1) * limit;
-    // const data = await this.prismaService.house.findMany({
-    //   where,
-    //   skip,
-    //   take: limit,
-    //   select: {
-    //     id: true,
-    //     title: true,
-    //     price: true,
-    //     location: true,
-    //     land_area: true,
-    //     building_area: true,
-    //     room_count: true,
-    //     bathroom_count: true,
-    //     parking_count: true,
-    //     image_url: true,
-    //   },
-    // });
-
-    // const totalData = await this.prismaService.house.count({
-    //   where,
-    // });
-
-    // return {
-    //   totalData,
-    //   data,
-    //   totalPages: Math.ceil(totalData / limit),
-    //   currentPage: page,
-    // };
   }
 
   async findOne(id: number) {
