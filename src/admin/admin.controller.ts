@@ -22,6 +22,23 @@ import { BaseResponseDto } from '@/common/dto/base-response.dto';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @Get('summary')
+  async getAdminSummary(@User('user_id') adminId: string) {
+    try {
+      const result = await this.adminService.getAdminSummary(adminId);
+      return {
+        message: 'Admin summary retrieved successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve admin summary',
+        error: error.message,
+      };
+    }
+  }
+
   @Get('financing-users')
   async getFinancingUsers(
     @User('user_id') adminId: string,

@@ -19,6 +19,52 @@ export class AdminService {
     private readonly paginationService: PaginationService<any>,
   ) {}
 
+  async getAdminSummary(adminId: string) {
+    try {
+      // Get all bookmarks for houses owned by this admin
+      const allBookmarks = await this.prismaService.houseBookmark.count({
+        where: {
+          house: {
+            admin_id: adminId,
+          },
+        },
+      });
+
+      // Get bookmarks with WAITING_FOR_APPROVAL status
+      const waitingForApproval = await this.prismaService.houseBookmark.count({
+        where: {
+          house: {
+            admin_id: adminId,
+          },
+          tracking_status: {
+            name: 'WAITING_FOR_APPROVAL',
+          },
+        },
+      });
+
+      // Get bookmarks with WAITING_FOR_SALES status
+      const needToContact = await this.prismaService.houseBookmark.count({
+        where: {
+          house: {
+            admin_id: adminId,
+          },
+          tracking_status: {
+            name: 'WAITING_FOR_SALES',
+          },
+        },
+      });
+
+      return {
+        total_financing_customers: allBookmarks,
+        waiting_for_approval: waitingForApproval,
+        need_to_contact: needToContact,
+      };
+    } catch (error) {
+      console.error('Error retrieving admin summary:', error.message);
+      throw new Error('Failed to retrieve admin summary');
+    }
+  }
+
   async getFinancingUsers(adminId: string, dto: QueryBookmarkHouseDto) {
     const where = {
       house: {
