@@ -88,6 +88,8 @@ export class AdminService {
         created_at: 'desc',
       },
       select: {
+        id: true,
+        tenor: true,
         tracking_status: true,
         created_at: true,
         updated_at: true,
@@ -127,6 +129,7 @@ export class AdminService {
     };
 
     const formattedData = houseBookmarks.map((item) => ({
+      ...item,
       house: item.house,
       user: {
         id: item.user.id,
@@ -395,6 +398,7 @@ export class AdminService {
           });
 
         return {
+          ...bookmark,
           user: {
             name: bookmark.user.name,
             profile_risk: bookmark.user.profile_risk
