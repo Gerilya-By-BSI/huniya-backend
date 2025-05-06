@@ -51,6 +51,30 @@ export class UserService {
     });
   }
 
+  async getProfileRiskTypes() {
+    try {
+      const profileRisks = await this.prismaService.profileRisk.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      // Transform names to title case for better readability
+      return profileRisks.map((risk) => ({
+        id: risk.id,
+        name: risk.name
+          .toLowerCase()
+          .split('_')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+      }));
+    } catch (error) {
+      console.error('Error retrieving profile risk types:', error);
+      throw new Error('Failed to retrieve profile risk types');
+    }
+  }
+
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }

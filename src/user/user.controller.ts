@@ -97,6 +97,29 @@ export class UserController {
     }
   }
 
+  @Get('profile-risk/types')
+  @HttpCode(HttpStatus.OK)
+  async getProfileRiskTypes() {
+    try {
+      const profileRisks = await this.userService.getProfileRiskTypes();
+
+      if (!profileRisks || profileRisks.length === 0) {
+        return BaseResponseDto.error('No profile risk types found', []);
+      }
+
+      return BaseResponseDto.success(
+        'Profile risk types retrieved successfully',
+        profileRisks,
+      );
+    } catch (error) {
+      console.error('Error retrieving profile risk types:', error.message);
+      return BaseResponseDto.error(
+        'Error retrieving profile risk types: ' + error.message,
+        null,
+      );
+    }
+  }
+
   @Get('profile')
   @HttpCode(HttpStatus.OK)
   async getProfile(@User('user_id') userId: string) {
